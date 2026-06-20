@@ -1,0 +1,33 @@
+:root {
+  /* Colores de Marca e Institucionales */
+  --primary-color: #3c6bec;       /* Azul principal (Botones, activos) */
+  --primary-hover: #2856b9;       /* Azul hover */
+  --brand-bg: #2839cc;            /* Fondo izquierdo del Login (Azul oscuro) */
+  --brand-subtitle: #93c5fd;      /* Texto secundario sobre fondo oscuro */
+  
+  /* Fondos del Panel y Componentes */
+  --sidebar-bg: #0f172a;          /* Fondo del Aside (Pizarra oscuro) */
+  --sidebar-border: #1e293b;      /* Separadores en el Aside */
+  --body-bg: #f1f5f9;             /* Fondo gris claro de la intranet */
+  --card-bg: #ffffff;             /* Fondo blanco de tarjetas y formularios */
+  
+  /* Textos y Bordes */
+  --text-main: #1e293b;           /* Texto principal */
+  --text-muted: #64748b;          /* Texto secundario / gris */
+  --text-light: #94a3b8;          /* Texto para fondos oscuros (nav inactivo) */
+  --border-light: #e2e8f0;        /* Bordes sutiles generales */
+  --border-input: #cbd5e1;        /* Bordes de cajas de texto */
+  
+  /* Alertas y Feedback */
+  --danger-bg: #fee2e2;           /* Fondo de errores / salir */
+  --danger-text: #dc2626;         /* Texto de errores / salir */
+  --danger-hover: #fca5a5;        /* Hover botón salir */
+}
+
+/* Reseteo unificado */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
