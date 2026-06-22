@@ -1,13 +1,29 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { Aside } from '../fragments/Aside';   
 import { Header } from '../fragments/Header'; 
+
 import { PersonalRegistroView } from './registros/PersonalRegistroView'; 
 import { SedeRegistroView } from './registros/SedeRegistroView'; 
 import { RolRegistroView } from './registros/RolesRegistroView'; 
 import { GradosRegistroView } from './registros/GradosRegistroView'; 
 import { EstudiantesRegistroView } from './registros/EstudiantesRegistroView'; 
+import { CursosRegistroView } from './registros/CursosRegistroView'; 
+import { ClasesRegistroView } from './registros/ClasesRegistroView'; 
+import { AsistenciaRegistroView } from './registros/AsistenciaRegistroView'; 
+import { TareasRegistroView } from './registros/TareasRegistroView'; 
+import { TipoDocumentoRegistroView } from './registros/TipoDocumentoRegistroView'; 
+import { MaterialRegistroView } from './registros/MaterialRegistroView'; 
+import { PadreRegistroView } from './registros/PadreRegistroView'; 
+
 import { EstudiantesConsultaView } from './consulta/EstudiantesConsultaView'; 
+import { PersonalConsultaView } from './consulta/PersonalConsultaView'; 
+import { CursosConsultaView } from './consulta/CursosConsultaView'; 
+import { AsistenciaConsultaView } from './consulta/AsistenciaConsultaView'; 
+import { TareaConsultaView } from './consulta/TareaConsultaView'; 
+import { MaterialConsultaView } from './consulta/MaterialConsultaView'; 
+
 import '../../static/Dashboard.css';
 import '../../static/global.css';
 
@@ -39,48 +55,7 @@ export function DashboardHome() {
         <Header userName={userName} onLogout={handleLogout} />
 
         <main className="dashboard-content">
-          {currentView === 'funciones' && (
-            <>
-              <div className="content-header">
-                <h3>Mis funciones:</h3>
-                <p>Selecciona una función para acceder a sus opciones.</p>
-              </div>
-              
-              <div className="cursos-grid">
-                <button className="curso-card-button" style={{ '--accent-color': 'var(--primary-color)' }} onClick={() => setCurrentView('registrar-personal')}>
-                  <div className="curso-card-header"><span className="curso-badge">Configuración</span></div>
-                  <div className="curso-card-body"><h4>Registrar Personal</h4></div>
-                  <div className="curso-card-footer"><span>Ir al Formulario →</span></div>
-                </button>
-                <button className="curso-card-button" style={{ '--accent-color': 'var(--primary-color)' }} onClick={() => setCurrentView('registrar-sede')}>
-                  <div className="curso-card-header"><span className="curso-badge">Configuración</span></div>
-                  <div className="curso-card-body"><h4>Registrar Sede</h4></div>
-                  <div className="curso-card-footer"><span>Ir al Formulario →</span></div>
-                </button>
-                <button className="curso-card-button" style={{ '--accent-color': 'var(--primary-color)' }} onClick={() => setCurrentView('registrar-roles')}>
-                  <div className="curso-card-header"><span className="curso-badge">Configuración</span></div>
-                  <div className="curso-card-body"><h4>Registrar Roles</h4></div>
-                  <div className="curso-card-footer"><span>Ir al Formulario →</span></div>
-                </button>
-                <button className="curso-card-button" style={{ '--accent-color': 'var(--primary-color)' }} onClick={() => setCurrentView('registrar-estudiantes')}>
-                  <div className="curso-card-header"><span className="curso-badge">Configuración</span></div>
-                  <div className="curso-card-body"><h4>Registrar Estudiantes</h4></div>
-                  <div className="curso-card-footer"><span>Ir al Formulario →</span></div>
-                </button>
-                <button className="curso-card-button" style={{ '--accent-color': 'var(--primary-color)' }} onClick={() => setCurrentView('registrar-grados')}>
-                  <div className="curso-card-header"><span className="curso-badge">Configuración</span></div>
-                  <div className="curso-card-body"><h4>Registrar Grados</h4></div>
-                  <div className="curso-card-footer"><span>Ir al Formulario →</span></div>
-                </button>
-                <button className="curso-card-button" style={{ '--accent-color': 'var(--primary-color)' }} onClick={() => setCurrentView('consulta-estudiantes')}>
-                  <div className="curso-card-header"><span className="curso-badge">Consulta</span></div>
-                  <div className="curso-card-body"><h4>Consultar Estudiantes</h4></div>
-                  <div className="curso-card-footer"><span>Ir a la Consulta →</span></div>
-                </button>
-              </div>
-            </>
-          )}
-
+ 
           {currentView === 'registrar-personal' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -127,14 +102,116 @@ export function DashboardHome() {
             </div>
           )}
 
-          {currentView === 'consulta-estudiantes' && (
+          {currentView === 'registrar-cursos' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
                 ← Volver al Menú Principal
               </button>
-              <EstudiantesConsultaView />
+              <CursosRegistroView />
             </div>
           )}
+
+          {currentView === 'registrar-clases' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <ClasesRegistroView />
+            </div>
+          )}
+          {currentView === 'registrar-asistencia' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <AsistenciaRegistroView />
+            </div>
+          )}
+
+          {currentView === 'registrar-tareas' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <TareasRegistroView />
+            </div>
+          )}
+
+          {currentView === 'registrar-tipo-documento' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <TipoDocumentoRegistroView />
+            </div>
+          )}
+
+          {currentView === 'registrar-material' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <MaterialRegistroView />
+            </div>
+          )}
+
+          {currentView === 'registrar-padre' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <PadreRegistroView />
+            </div>
+          )}
+
+
+
+
+
+
+          {currentView === 'consulta-personal' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <PersonalConsultaView />
+            </div>
+          )}
+
+          {currentView === 'consulta-cursos' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <CursosConsultaView />
+            </div>
+          )}
+
+          {currentView === 'consulta-asistencia' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <AsistenciaConsultaView />
+            </div>
+          )}
+          {currentView === 'consulta-tareas' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <TareaConsultaView />
+            </div>
+          )}
+          {currentView === 'consulta-material' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <MaterialConsultaView />
+            </div>
+          )}
+
         </main>
       </div>
     </div>

@@ -341,6 +341,7 @@ export function EstudiantesRegistroView() {
             {loading ? 'Procesando...' : editingId ? 'Guardar Cambios' : 'Registrar Estudiante'}
           </button>
 
+
           {editingId && (
             <button type="button" onClick={cancelarEdicion} style={{ width: '100%', padding: '12px', marginTop: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', cursor: 'pointer', color: 'var(--text-main)', fontWeight: '600' }}>
               Cancelar Edición

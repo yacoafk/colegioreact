@@ -7,6 +7,7 @@ export function Aside({ onViewChange, currentView }) {
   // Estados para controlar qué menús desplegables están abiertos
   const [openRegistrar, setOpenRegistrar] = useState(false);
   const [openConsultas, setOpenConsultas] = useState(false);
+  const [openProfesor, setOpenProfesor] = useState(false);
 
   // Helper para verificar si la vista actual pertenece al grupo de registros
   const vistanPerteneceARegistrar = [
@@ -92,6 +93,79 @@ export function Aside({ onViewChange, currentView }) {
               >
                 • Estudiantes
               </button>
+              <button 
+                onClick={() => onViewChange('registrar-cursos')} 
+                className={`nav-item sub-item ${currentView === 'registrar-cursos' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Cursos
+              </button>
+              <button 
+                  onClick={() => onViewChange('registrar-tipo-documento')} 
+                  className={`nav-item sub-item ${currentView === 'registrar-tipo-documento' ? 'active' : ''}`}
+                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+                >
+                  • Tipo de Documento
+                </button>
+                <button 
+                  onClick={() => onViewChange('registrar-padre')} 
+                  className={`nav-item sub-item ${currentView === 'registrar-padre' ? 'active' : ''}`}
+                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+                >
+                  • Padre
+                </button>
+            </div>
+          )}
+        </div>
+
+
+        {/* ---------------------------------------------------- */}
+        {/* GRUPO PROFESOR */}
+        {/* ---------------------------------------------------- */}
+        <div>
+          <button 
+            onClick={() => setOpenProfesor(!openProfesor)} 
+            className={`nav-item ${vistanPerteneceARegistrar ? 'active' : ''}`}
+            style={{ 
+              background: 'none', border: 'none', width: '100%', textAlign: 'left', 
+              cursor: 'pointer', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' 
+            }}
+          >
+            <span>👨‍🏫📋 Control de Profesor</span>
+            <span>{openProfesor || vistanPerteneceARegistrar ? '▼' : '▶'}</span>
+          </button>
+
+          {/* Submenú de Registro (Se muestra si está abierto o si estás dentro de una de sus vistas) */}
+          {(openProfesor || vistanPerteneceARegistrar) && (
+            <div style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '2px', background: 'rgba(0,0,0,0.02)', borderRadius: '4px' }}>
+              <button 
+                onClick={() => onViewChange('registrar-clases')} 
+                className={`nav-item sub-item ${currentView === 'registrar-clases' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Clases
+              </button>
+              <button 
+                onClick={() => onViewChange('registrar-asistencia')} 
+                className={`nav-item sub-item ${currentView === 'registrar-asistencia' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Asistencia
+              </button>
+              <button 
+                onClick={() => onViewChange('registrar-tareas')} 
+                className={`nav-item sub-item ${currentView === 'registrar-tareas' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Tareas
+              </button>
+              <button 
+                onClick={() => onViewChange('registrar-material')} 
+                className={`nav-item sub-item ${currentView === 'registrar-material' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Material
+              </button>
             </div>
           )}
         </div>
@@ -116,11 +190,46 @@ export function Aside({ onViewChange, currentView }) {
           {(openConsultas || vistaPerteneceAConsultas) && (
             <div style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '2px', background: 'rgba(0,0,0,0.02)', borderRadius: '4px' }}>
               <button 
-                onClick={() => onViewChange('consultar-estudiantes')} 
-                className={`nav-item sub-item ${currentView === 'consultar-estudiantes' ? 'active' : ''}`}
+                onClick={() => onViewChange('consulta-estudiantes')} 
+                className={`nav-item sub-item ${currentView === 'consulta-estudiantes' ? 'active' : ''}`}
                 style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
               >
-                • Estudiantes por Sección
+                • Estudiantes por Sede/Sección
+              </button>
+              <button 
+                onClick={() => onViewChange('consulta-personal')} 
+                className={`nav-item sub-item ${currentView === 'consulta-personal' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Personal por Sede/Rol
+              </button>
+              <button 
+                onClick={() => onViewChange('consulta-cursos')} 
+                className={`nav-item sub-item ${currentView === 'consulta-cursos' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Malla Curricular por Sede/Grado
+              </button>
+              <button 
+                onClick={() => onViewChange('consulta-asistencia')} 
+                className={`nav-item sub-item ${currentView === 'consulta-asistencia' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Asistencia por Curso/Fecha
+              </button>
+              <button 
+                onClick={() => onViewChange('consulta-tareas')} 
+                className={`nav-item sub-item ${currentView === 'consulta-tareas' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Tareas por Curso/Fecha
+              </button>
+              <button 
+                onClick={() => onViewChange('consulta-material')} 
+                className={`nav-item sub-item ${currentView === 'consulta-material' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Material por Sede/Grado
               </button>
             </div>
           )}

@@ -6,10 +6,11 @@ export function PersonalRegistroView() {
   const [personalList, setPersonalList] = useState([]);
   const [sedes, setSedes] = useState([]); 
   const [roles, setRoles] = useState([]); 
+  const [tiposDoc, setTiposDoc] = useState([]); // 🆕 Estado para almacenar los tipos de documento desde el Backend
   const [editingId, setEditingId] = useState(null);
 
   const [formData, setFormData] = useState({
-    idTipoDoc: 1, 
+    idTipoDoc: '', // 🔄 Se inicializa vacío para que tome el primer elemento dinámico cargado
     nroDocumento: '',
     nombres: '',
     apellidos: '',
@@ -28,6 +29,19 @@ export function PersonalRegistroView() {
       setPersonalList(response.data);
     } catch (err) {
       console.error("Error al obtener lista de personal", err);
+    }
+  };
+
+  // 🆕 FUNCIÓN PARA CARGAR LOS TIPOS DE DOCUMENTO DESDE LA API
+  const cargarTiposDocumento = async () => {
+    try {
+      const response = await api.get('tipos-documento');
+      setTiposDoc(response.data);
+      if (response.data.length > 0) {
+        setFormData(prev => ({ ...prev, idTipoDoc: response.data[0].idTipoDoc }));
+      }
+    } catch (err) {
+      console.error("Error al cargar tipos de documento para el select", err);
     }
   };
 
@@ -57,6 +71,7 @@ export function PersonalRegistroView() {
 
   useEffect(() => {
     listarPersonal();
+    cargarTiposDocumento(); // 🆕 Disparamos la consulta al montar el componente
     cargarSedes(); 
     cargarRoles(); 
   }, []);
@@ -73,12 +88,11 @@ export function PersonalRegistroView() {
 
   // 2. PREPARAR EL FORMULARIO PARA EDITAR
   const handleEditClick = (persona) => {
-    // Protección extra en JS por si se intenta disparar la función por consola
     if (persona.estado === 'RETIRADO') return;
 
     setEditingId(persona.idPersonal); 
     setFormData({
-      idTipoDoc: persona.idTipoDoc?.idTipoDoc || 1,
+      idTipoDoc: persona.idTipoDoc?.idTipoDoc || (tiposDoc[0]?.idTipoDoc || 1), // 🔄 Mapeo dinámico del TipoDoc asignado
       nroDocumento: persona.nroDocumento,
       nombres: persona.nombres,
       apellidos: persona.apellidos,
@@ -92,7 +106,7 @@ export function PersonalRegistroView() {
   const cancelarEdicion = () => {
     setEditingId(null);
     setFormData({ 
-      idTipoDoc: 1, 
+      idTipoDoc: tiposDoc[0]?.idTipoDoc || '', // 🔄 Resetea al primer tipo de documento de la lista
       nroDocumento: '', 
       nombres: '', 
       apellidos: '', 
@@ -109,7 +123,7 @@ export function PersonalRegistroView() {
     setLoading(true);
     setMensaje({ texto: '', tipo: '' });
 
-    if (!formData.nroDocumento || !formData.nombres || !formData.apellidos || (!editingId && !formData.contrasenia)) {
+    if (!formData.idTipoDoc || !formData.nroDocumento || !formData.nombres || !formData.apellidos || (!editingId && !formData.contrasenia)) {
       setMensaje({ texto: 'Por favor, rellena todos los campos requeridos.', tipo: 'error' });
       setLoading(false);
       return;
@@ -170,10 +184,15 @@ export function PersonalRegistroView() {
           <tbody>
             {personalList.map((p) => (
               <tr key={p.idPersonal} style={{ borderBottom: '1px solid var(--border-light)', opacity: p.estado === 'RETIRADO' ? 0.7 : 1 }}>
-                <td style={{ padding: '12px 5px' }}>{p.nroDocumento}</td>
+                {/* 🔄 Muestra el tipo de documento abreviado junto al número (Ej: DNI - 74859612) */}
+                <td style={{ padding: '12px 5px' }}>
+                  <span style={{ fontWeight: '600', color: 'var(--text-muted)', fontSize: '0.8rem', marginRight: '4px' }}>
+                    {p.idTipoDoc?.abreviatura || 'DOC'}:
+                  </span>
+                  {p.nroDocumento}
+                </td>
                 <td>{p.nombres} {p.apellidos}</td>
                 
-                {/* 📝 RENDERIZAR ROL DINÁMICO */}
                 <td>
                   <span style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--text-main)', background: '#f8fafc', padding: '2px 6px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
                     {p.idRol?.nombreRol || 'Sin Rol'}
@@ -191,7 +210,6 @@ export function PersonalRegistroView() {
                 </td>
                 <td style={{ display: 'flex', gap: '8px', justifyContent: 'center', padding: '12px 5px' }}>
                   
-                  {/* 🔒 FILTRO DE SEGURIDAD EN ACCIONES */}
                   {p.estado !== 'RETIRADO' ? (
                     <>
                       <button 
@@ -247,13 +265,21 @@ export function PersonalRegistroView() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div className="input-group">
               <label>Tipo Documento</label>
+              {/* 🔄 SELECT COMPLETAMENTE DINÁMICO DESDE LA API DE TIPOS DE DOCUMENTO */}
               <select name="idTipoDoc" value={formData.idTipoDoc} onChange={handleChange} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1.5px solid var(--border-input)', outline: 'none' }}>
-                <option value={1}>DNI</option>
+                {tiposDoc.map((tipo) => (
+                  <option key={tipo.idTipoDoc} value={tipo.idTipoDoc}>
+                    {tipo.abreviatura} - {tipo.descripcion}
+                  </option>
+                ))}
+                {tiposDoc.length === 0 && (
+                  <option value="">Cargando documentos...</option>
+                )}
               </select>
             </div>
             <div className="input-group">
               <label>Nro Documento</label>
-              <input type="text" name="nroDocumento" maxLength={8} value={formData.nroDocumento} onChange={handleChange} placeholder="Ej. 74859612" />
+              <input type="text" name="nroDocumento" maxLength={15} value={formData.nroDocumento} onChange={handleChange} placeholder="Ej. 74859612" />
             </div>
           </div>
 
