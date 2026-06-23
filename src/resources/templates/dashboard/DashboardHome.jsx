@@ -18,6 +18,8 @@ import { MaterialRegistroView } from './registros/MaterialRegistroView';
 import { PadreRegistroView } from './registros/PadreRegistroView'; 
 
 import { EstudiantesConsultaView } from './consulta/EstudiantesConsultaView'; 
+import { PadreEstudiantesConsultaView } from './consulta/PadreEstudiantesConsultaView'; 
+import { PadreConsultaView } from './consulta/PadreConsultaView'; 
 import { PersonalConsultaView } from './consulta/PersonalConsultaView'; 
 import { CursosConsultaView } from './consulta/CursosConsultaView'; 
 import { AsistenciaConsultaView } from './consulta/AsistenciaConsultaView'; 
@@ -168,6 +170,15 @@ export function DashboardHome() {
 
 
 
+          {currentView === 'consulta-estudiantes' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <EstudiantesConsultaView />
+            </div>
+          )}
+
 
           {currentView === 'consulta-personal' && (
             <div>
@@ -175,6 +186,24 @@ export function DashboardHome() {
                 ← Volver al Menú Principal
               </button>
               <PersonalConsultaView />
+            </div>
+          )}
+
+          {currentView === 'consulta-padre-estudiantes' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <PadreEstudiantesConsultaView />
+            </div>
+          )}
+
+          {currentView === 'consulta-padre' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <PadreConsultaView />
             </div>
           )}
 

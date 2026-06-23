@@ -59,18 +59,18 @@ export function Aside({ onViewChange, currentView }) {
           {(openRegistrar || vistanPerteneceARegistrar) && (
             <div style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '2px', background: 'rgba(0,0,0,0.02)', borderRadius: '4px' }}>
               <button 
+                  onClick={() => onViewChange('registrar-tipo-documento')} 
+                  className={`nav-item sub-item ${currentView === 'registrar-tipo-documento' ? 'active' : ''}`}
+                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+                >
+                  • Tipo de Documento
+                </button>
+              <button 
                 onClick={() => onViewChange('registrar-personal')} 
                 className={`nav-item sub-item ${currentView === 'registrar-personal' ? 'active' : ''}`}
                 style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
               >
                 • Personal
-              </button>
-              <button 
-                onClick={() => onViewChange('registrar-sede')} 
-                className={`nav-item sub-item ${currentView === 'registrar-sede' ? 'active' : ''}`}
-                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
-              >
-                • Sede
               </button>
               <button 
                 onClick={() => onViewChange('registrar-roles')} 
@@ -80,18 +80,18 @@ export function Aside({ onViewChange, currentView }) {
                 • Roles
               </button>
               <button 
+                onClick={() => onViewChange('registrar-sede')} 
+                className={`nav-item sub-item ${currentView === 'registrar-sede' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Sede
+              </button> 
+              <button 
                 onClick={() => onViewChange('registrar-grados')} 
                 className={`nav-item sub-item ${currentView === 'registrar-grados' ? 'active' : ''}`}
                 style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
               >
                 • Grados
-              </button>
-              <button 
-                onClick={() => onViewChange('registrar-estudiantes')} 
-                className={`nav-item sub-item ${currentView === 'registrar-estudiantes' ? 'active' : ''}`}
-                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
-              >
-                • Estudiantes
               </button>
               <button 
                 onClick={() => onViewChange('registrar-cursos')} 
@@ -101,12 +101,12 @@ export function Aside({ onViewChange, currentView }) {
                 • Cursos
               </button>
               <button 
-                  onClick={() => onViewChange('registrar-tipo-documento')} 
-                  className={`nav-item sub-item ${currentView === 'registrar-tipo-documento' ? 'active' : ''}`}
-                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
-                >
-                  • Tipo de Documento
-                </button>
+                onClick={() => onViewChange('registrar-estudiantes')} 
+                className={`nav-item sub-item ${currentView === 'registrar-estudiantes' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Estudiantes
+              </button>
                 <button 
                   onClick={() => onViewChange('registrar-padre')} 
                   className={`nav-item sub-item ${currentView === 'registrar-padre' ? 'active' : ''}`}
@@ -195,6 +195,20 @@ export function Aside({ onViewChange, currentView }) {
                 style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
               >
                 • Estudiantes por Sede/Sección
+              </button>
+              <button 
+                onClick={() => onViewChange('consulta-padre-estudiantes')} 
+                className={`nav-item sub-item ${currentView === 'consulta-padre-estudiantes' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Padres de Estudiantes
+              </button>
+              <button 
+                onClick={() => onViewChange('consulta-padre')} 
+                className={`nav-item sub-item ${currentView === 'consulta-padre' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', padding: '10px 16px', fontSize: '0.9rem' }}
+              >
+                • Padres por Sede/Sección
               </button>
               <button 
                 onClick={() => onViewChange('consulta-personal')} 
