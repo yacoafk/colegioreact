@@ -77,161 +77,190 @@ export function PersonalConsultaView() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      
-      {/* CARD DE CONTROL: FILTROS */}
-      <div style={{ background: 'var(--card-bg)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-light)', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-        <h3 style={{ marginBottom: '16px', color: 'var(--text-main)', fontWeight: '600', fontSize: '1.3rem' }}>
+    <div className="page-container">
+
+      {/* FILTROS */}
+      <div className="card">
+        <h3 className="card-title">
           🔍 Consulta Estructurada de Personal
         </h3>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+
+        <div className="form-grid">
+          
           <div className="input-group">
-            <label style={{ fontWeight: '500', marginBottom: '6px', display: 'block' }}>Filtrar por Campus / Sede</label>
-            <select 
-              value={selectedSede} 
+            <label className="input-label">Filtrar por Campus / Sede</label>
+            <select
+              value={selectedSede}
               onChange={(e) => setSelectedSede(Number(e.target.value))}
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1.5px solid var(--border-input)', fontSize: '0.95rem' }}
+              className="select"
             >
               {sedes.map((s) => (
-                <option key={s.idSede} value={s.idSede}>{s.nombre}</option>
+                <option key={s.idSede} value={s.idSede}>
+                  {s.nombre}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="input-group">
-            <label style={{ fontWeight: '500', marginBottom: '6px', display: 'block' }}>Especialidad / Rol Institucional</label>
-            <select 
-              value={selectedRol} 
+            <label className="input-label">Especialidad / Rol Institucional</label>
+            <select
+              value={selectedRol}
               onChange={(e) => setSelectedRol(Number(e.target.value))}
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1.5px solid var(--border-input)', fontSize: '0.95rem' }}
+              className="select"
             >
               {roles.map((r) => (
-                <option key={r.idRol} value={r.idRol}>{r.nombreRol || r.nombre}</option>
+                <option key={r.idRol} value={r.idRol}>
+                  {r.nombreRol || r.nombre}
+                </option>
               ))}
             </select>
           </div>
+
         </div>
       </div>
 
-      {/* CARD DE RESULTADOS: TABLA CORPORATIVA */}
-      <div style={{ background: 'var(--card-bg)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h4 style={{ color: 'var(--text-main)', fontWeight: '600', margin: 0 }}>
+      {/* TABLA */}
+      <div className="card">
+        <div className="flex-between">
+          <h4 className="section-title">
             Colaboradores Asignados
-            <span style={{ marginLeft: '10px', fontSize: '0.85rem', background: 'var(--primary-color)', color: '#fff', padding: '2px 8px', borderRadius: '20px' }}>
-              {personalFiltrado.length} Registros encontrados
+            <span className="badge">
+              {personalFiltrado.length} Registros
             </span>
           </h4>
         </div>
 
         {loading ? (
-          <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>Sincronizando la nómina del personal...</p>
+          <p className="text-center text-muted">
+            Sincronizando la nómina del personal...
+          </p>
+        ) : personalFiltrado.length === 0 ? (
+          <div className="empty-state">
+            Ningún miembro coincide con los filtros seleccionados
+          </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+          <table className="table">
             <thead>
-              <tr style={{ borderBottom: '2px solid var(--border-light)', color: 'var(--text-muted)', height: '40px' }}>
-                <th style={{ padding: '10px' }}>ID Sistema</th>
-                <th>Documento Identidad</th>
+              <tr>
+                <th>ID</th>
+                <th>Documento</th>
                 <th>Apellidos y Nombres</th>
-                <th>Sede Actual</th>
-                <th>Rol / Puesto</th>
-                <th style={{ textAlign: 'center' }}>Estado Laboral</th>
-                <th style={{ textAlign: 'center' }}>Cursos Asignados</th>
+                <th>Sede</th>
+                <th>Rol</th>
+                <th className="text-center">Estado</th>
+                <th className="text-center">Cursos</th>
               </tr>
             </thead>
+
             <tbody>
               {personalFiltrado.map((p) => {
-                const nombreDelRol = p.idRol?.nombreRol || p.idRol?.nombre || roles.find(r => r.idRol === p.idRol)?.nombre || '';
-                // Condición: Es profesor si el texto contiene 'PROFESOR' o 'DOCENTE'
-                const esProfesor = nombreDelRol.toUpperCase().includes('PROFESOR') || nombreDelRol.toUpperCase().includes('DOCENTE');
+                const nombreDelRol =
+                  p.idRol?.nombreRol ||
+                  p.idRol?.nombre ||
+                  roles.find(r => r.idRol === p.idRol)?.nombre ||
+                  '';
+
+                const esProfesor =
+                  nombreDelRol.toUpperCase().includes('PROFESOR') ||
+                  nombreDelRol.toUpperCase().includes('DOCENTE');
 
                 return (
-                  <tr key={p.idPersonal} style={{ borderBottom: '1px solid var(--border-light)', height: '45px', backgroundColor: profesorSeleccionado?.idPersonal === p.idPersonal ? '#f8fafc' : 'transparent', opacity: p.estado === 'RETIRADO' ? 0.5 : 1 }}>
-                    <td style={{ padding: '10px', fontWeight: '600', color: 'var(--primary-color)' }}>#{p.idPersonal}</td>
+                  <tr
+                    key={p.idPersonal}
+                    className={p.estado === 'RETIRADO' ? 'inactive' : ''}
+                    style={{
+                      background:
+                        profesorSeleccionado?.idPersonal === p.idPersonal
+                          ? '#f8fafc'
+                          : 'transparent'
+                    }}
+                  >
+                    <td className="text-primary">#{p.idPersonal}</td>
                     <td>{p.nroDocumento}</td>
-                    <td><strong style={{ fontWeight: '500' }}>{p.apellidos}</strong>, {p.nombres}</td>
-                    <td>{p.idSede?.nombre || sedes.find(s => s.idSede === p.idSede)?.nombre || 'Asignada'}</td>
                     <td>
-                      <span style={{ background: '#f3f4f6', color: '#374151', padding: '3px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '500' }}>
+                      <strong>{p.apellidos}</strong>, {p.nombres}
+                    </td>
+                    <td>
+                      {p.idSede?.nombre ||
+                        sedes.find(s => s.idSede === p.idSede)?.nombre ||
+                        'Asignada'}
+                    </td>
+                    <td>
+                      <span className="badge" style={{ background: '#f3f4f6', color: '#374151' }}>
                         {nombreDelRol || 'Especialista'}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <span style={{
-                        padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '700',
-                        backgroundColor: p.estado === 'ACTIVO' || !p.estado ? '#d1fae5' : 'var(--danger-bg)',
-                        color: p.estado === 'ACTIVO' || !p.estado ? '#065f46' : 'var(--danger-text)'
-                      }}>
+                    <td className="text-center">
+                      <span className={`status ${p.estado === 'RETIRADO' ? 'inactive' : 'active'}`}>
                         {p.estado || 'ACTIVO'}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'center' }}>
+                    <td className="text-center">
                       {esProfesor ? (
-                        <button 
+                        <button
                           onClick={() => handleVerCursosClick(p)}
-                          style={{ padding: '5px 10px', background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}
+                          className="btn-secondary"
                         >
                           👁️ Ver Cursos
                         </button>
                       ) : (
-                        <span style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.85rem' }}>No Aplica</span>
+                        <span className="text-muted">No aplica</span>
                       )}
                     </td>
                   </tr>
                 );
               })}
-
-              {personalFiltrado.length === 0 && (
-                <tr>
-                  <td colSpan="7" style={{ textAlign: 'center', padding: '35px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
-                    Ningún miembro del personal coincide actualmente con la Sede y el Rol seleccionados.
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         )}
       </div>
 
-      {/* 🆕 SUB-CARD REACTIVO: SE DESPLIEGA ABAJO AL DAR CLICK AL OJO */}
+      {/* CURSOS DEL PROFESOR */}
       {profesorSeleccionado && (
-        <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h4 style={{ margin: 0, color: 'var(--text-main)', fontWeight: '600', fontSize: '1.1rem' }}>
-              📚 Cursos dictados por: <span style={{ color: 'var(--primary-color)' }}>{profesorSeleccionado.apellidos}, {profesorSeleccionado.nombres}</span>
+        <div className="card">
+          <div className="flex-between">
+            <h4 className="section-title">
+              📚 Cursos dictados por:
+              <span className="text-primary">
+                {' '}
+                {profesorSeleccionado.apellidos}, {profesorSeleccionado.nombres}
+              </span>
             </h4>
-            <button 
-              onClick={() => setProfesorSeleccionado(null)} 
-              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem', color: 'var(--text-muted)' }}
+
+            <button
+              onClick={() => setProfesorSeleccionado(null)}
+              className="text-muted"
+              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
             >
-              ❌ Cerrar Visor
+              ❌
             </button>
           </div>
 
           {loadingCursos ? (
-            <p style={{ fontStyle: 'italic', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Cargando asignaturas...</p>
+            <p className="text-muted">Cargando asignaturas...</p>
           ) : cursosDelProfesor.length === 0 ? (
-            <p style={{ fontStyle: 'italic', fontSize: '0.9rem', color: '#b45309', margin: 0 }}>
-              ⚠️ Este docente no tiene asignaturas o salones vinculados en la malla actual.
-            </p>
+            <div className="empty-state">
+              Este docente no tiene cursos asignados
+            </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem', background: '#fff', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+            <table className="table">
               <thead>
-                <tr style={{ borderBottom: '1px solid var(--border-light)', background: '#f1f5f9', color: 'var(--text-muted)', height: '35px' }}>
-                  <th style={{ padding: '10px' }}>Código Curso</th>
-                  <th>Nombre de la Asignatura</th>
+                <tr>
+                  <th>Código</th>
+                  <th>Asignatura</th>
                   <th>Grado / Sección</th>
                 </tr>
               </thead>
               <tbody>
-                {cursosDelProfesor.map(curso => (
-                  <tr key={curso.idCurso} style={{ borderBottom: '1px solid #f1f5f9', height: '40px' }}>
-                    <td style={{ padding: '10px', fontWeight: '600', color: 'var(--primary-color)' }}>CRS-{curso.idCurso}</td>
-                    <td style={{ color: 'var(--text-main)', fontWeight: '500' }}>{curso.nombreCurso}</td>
+                {cursosDelProfesor.map((curso) => (
+                  <tr key={curso.idCurso}>
+                    <td className="text-primary">CRS-{curso.idCurso}</td>
+                    <td>{curso.nombreCurso}</td>
                     <td>
-                      <span style={{ background: '#eff6ff', color: '#1e40af', padding: '3px 8px', borderRadius: '4px', fontWeight: '600' }}>
-                        {curso.idGrado?.nombreGrado || 'Grado Asignado'} - "{curso.idGrado?.seccion || '-'}"
+                      <span className="badge" style={{ background: '#eff6ff', color: '#1e40af' }}>
+                        {curso.idGrado?.nombreGrado || 'Grado'} - "
+                        {curso.idGrado?.seccion || '-'}"
                       </span>
                     </td>
                   </tr>

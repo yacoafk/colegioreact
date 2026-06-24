@@ -161,130 +161,158 @@ export function TareaConsultaView() {
     }
   };
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      
-      {/* CARD DEL BUSCADOR */}
-      <div style={{ background: 'var(--card-bg)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
-        <h3 style={{ marginBottom: '16px', color: 'var(--text-main)', fontWeight: '600' }}>
-          🔍 Consulta de Tareas por Aula y Sesión
-        </h3>
-        
-        <form onSubmit={handleBuscarTareas} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-          <div>
-            <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>1. Sede / Campus</label>
-            <select name="idSede" value={seleccion.idSede} onChange={handleFiltroChange} style={{ width: '100%', padding: '10px', borderRadius: '6px' }}>
-              {sedes.map(s => <option key={s.idSede} value={s.idSede}>{s.nombre}</option>)}
-            </select>
-          </div>
+return (
+  <div className="page-container">
 
-          <div>
-            <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>2. Grado Escolar</label>
-            <select name="idGrado" value={seleccion.idGrado} onChange={handleFiltroChange} disabled={gradosFiltrados.length === 0} style={{ width: '100%', padding: '10px', borderRadius: '6px' }}>
-              {gradosFiltrados.map(g => <option key={g.idGrado} value={g.idGrado}>{g.nombreGrado} - "{g.seccion}"</option>)}
-            </select>
-          </div>
+    {/* ===== CARD FILTROS ===== */}
+    <div className="card">
+      <h3 className="card-title">
+        🔍 Consulta de Tareas por Aula y Sesión
+      </h3>
 
-          <div>
-            <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>3. Asignatura / Curso</label>
-            <select name="idCurso" value={seleccion.idCurso} onChange={handleFiltroChange} disabled={cursosFiltrados.length === 0} style={{ width: '100%', padding: '10px', borderRadius: '6px' }}>
-              {cursosFiltrados.map(c => <option key={c.idCurso} value={c.idCurso}>{c.nombreCurso}</option>)}
-              {cursosFiltrados.length === 0 && <option value="">No hay cursos registrados</option>}
-            </select>
-          </div>
+      <form onSubmit={handleBuscarTareas} className="form-grid">
 
-          <div>
-            <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>4. Sesión o Clase</label>
-            <select name="idClase" value={seleccion.idClase} onChange={handleFiltroChange} disabled={clasesFiltradas.length === 0} style={{ width: '100%', padding: '10px', borderRadius: '6px' }}>
-              {clasesFiltradas.map(cl => (
-                <option key={cl.idClase} value={cl.idClase}>
-                  {new Date(cl.fechaClase).toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'numeric'})} - {cl.titulo}
-                </option>
-              ))}
-              {clasesFiltradas.length === 0 && <option value="">Sin clases agendadas</option>}
-            </select>
-          </div>
-
-          <div style={{ gridColumn: 'span 2', textAlign: 'right', marginTop: '10px' }}>
-            <button type="submit" disabled={loading || clasesFiltradas.length === 0} style={{ padding: '11px 28px', background: '#0369a1', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}>
-              {loadingTareas ? 'Cargando Tareas...' : '📂 Ver Tareas'}
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {/* RECUADRO DE ADVERTENCIA */}
-      {mensaje.texto && (
-        <div style={{ 
-          padding: '16px', 
-          borderRadius: '8px', 
-          background: mensaje.tipo === 'error' ? '#fff7ed' : '#f0fdf4', 
-          color: mensaje.tipo === 'error' ? '#c2410c' : '#166534', 
-          border: `1px solid ${mensaje.tipo === 'error' ? '#fed7aa' : '#bbf7d0'}`, 
-          fontWeight: '600',
-          textAlign: 'center'
-        }}>
-          ⚠️ {mensaje.texto}
-        </div>
-      )}
-
-      {/* VISTA DE TARJETAS/REPORTES DE LAS TAREAS ENCONTRADAS */}
-      {tareasList.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <h4 style={{ margin: 0, fontWeight: '600', color: 'var(--text-main)' }}>📋 Tareas Asignadas a esta Sesión</h4>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }}>
-            {tareasList.map((tarea) => (
-              <div key={tarea.idTarea} style={{ background: 'var(--card-bg)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-light)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <h5 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600', color: 'var(--text-main)' }}>
-                    📌 {tarea.titulo}
-                  </h5>
-                  <span style={{ fontSize: '0.8rem', background: '#e0f2fe', color: '#0369a1', padding: '4px 8px', borderRadius: '4px', fontWeight: '600' }}>
-                    ID Tarea: #{tarea.idTarea}
-                  </span>
-                </div>
-
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px', whiteSpace: 'pre-line' }}>
-                  {tarea.descripcion || "Sin descripción detallada."}
-                </p>
-
-                <hr style={{ border: '0', borderTop: '1px solid var(--border-light)', marginBottom: '12px' }} />
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '0.85rem' }}>
-                  <div>
-                    <span style={{ color: 'var(--text-muted)' }}>📅 Fecha de Inicio: </span>
-                    <strong style={{ color: 'var(--text-main)' }}>
-                      {new Date(tarea.fechaInicio).toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'})}
-                    </strong>
-                  </div>
-                  <div>
-                    <span style={{ color: 'var(--text-muted)' }}>🚨 Plazo Máximo: </span>
-                    <strong style={{ color: '#b91c1c' }}>
-                      {new Date(tarea.fechaTermino).toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'})}
-                    </strong>
-                  </div>
-                </div>
-
-                {tarea.urlArchivoAdjunto && (
-                  <div style={{ marginTop: '14px' }}>
-                    <a 
-                      href={tarea.urlArchivoAdjunto} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                    >
-                      📎 Ver material adjunto / documento de la tarea
-                    </a>
-                  </div>
-                )}
-
-              </div>
+        <div className="input-group">
+          <label className="input-label">1. Sede / Campus</label>
+          <select
+            name="idSede"
+            value={seleccion.idSede}
+            onChange={handleFiltroChange}
+            className="select"
+          >
+            {sedes.map(s => (
+              <option key={s.idSede} value={s.idSede}>
+                {s.nombre}
+              </option>
             ))}
-          </div>
+          </select>
         </div>
-      )}
+
+        <div className="input-group">
+          <label className="input-label">2. Grado Escolar</label>
+          <select
+            name="idGrado"
+            value={seleccion.idGrado}
+            onChange={handleFiltroChange}
+            disabled={gradosFiltrados.length === 0}
+            className="select"
+          >
+            {gradosFiltrados.map(g => (
+              <option key={g.idGrado} value={g.idGrado}>
+                {g.nombreGrado} - "{g.seccion}"
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="input-group">
+          <label className="input-label">3. Curso</label>
+          <select
+            name="idCurso"
+            value={seleccion.idCurso}
+            onChange={handleFiltroChange}
+            disabled={cursosFiltrados.length === 0}
+            className="select"
+          >
+            {cursosFiltrados.map(c => (
+              <option key={c.idCurso} value={c.idCurso}>
+                {c.nombreCurso}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="input-group">
+          <label className="input-label">4. Clase</label>
+          <select
+            name="idClase"
+            value={seleccion.idClase}
+            onChange={handleFiltroChange}
+            disabled={clasesFiltradas.length === 0}
+            className="select"
+          >
+            {clasesFiltradas.map(cl => (
+              <option key={cl.idClase} value={cl.idClase}>
+                {new Date(cl.fechaClase).toLocaleDateString()}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-actions">
+          <button
+            type="submit"
+            disabled={loading || clasesFiltradas.length === 0}
+            className="btn-primary"
+          >
+            {loadingTareas ? "Cargando..." : "📂 Ver Tareas"}
+          </button>
+        </div>
+      </form>
     </div>
-  );
+
+    {/* ===== MENSAJE ===== */}
+    {mensaje.texto && (
+      <div className={`alert ${mensaje.tipo}`}>
+        ⚠️ {mensaje.texto}
+      </div>
+    )}
+
+    {/* ===== RESULTADOS ===== */}
+    {tareasList.length > 0 && (
+      <div className="page-container">
+        <h4 className="section-title">
+          📋 Tareas Asignadas
+        </h4>
+
+        <div className="task-list">
+          {tareasList.map(tarea => (
+            <div key={tarea.idTarea} className="task-card">
+
+              <div className="task-header">
+                <h5>📌 {tarea.titulo}</h5>
+                <span className="task-id">
+                  ID #{tarea.idTarea}
+                </span>
+              </div>
+
+              <p className="task-desc">
+                {tarea.descripcion || "Sin descripción"}
+              </p>
+
+              <div className="task-dates">
+                <div>
+                  <span>📅 Inicio: </span>
+                  <strong>
+                    {new Date(tarea.fechaInicio).toLocaleDateString()}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>🚨 Fin: </span>
+                  <strong className="text-danger">
+                    {new Date(tarea.fechaTermino).toLocaleDateString()}
+                  </strong>
+                </div>
+              </div>
+
+              {tarea.urlArchivoAdjunto && (
+                <a
+                  href={tarea.urlArchivoAdjunto}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="task-link"
+                >
+                  📎 Ver archivo
+                </a>
+              )}
+
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+  </div>
+);
 }

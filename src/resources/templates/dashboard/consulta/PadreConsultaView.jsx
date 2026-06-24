@@ -53,67 +53,83 @@ export function PadreConsultaView() {
     buscarPadres();
   }, [selectedSede, selectedGrado]);
 
-return (
-  <div style={{ padding: '24px', background: 'var(--card-bg)', borderRadius: '12px', border: '1px solid var(--border-light)', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-    <h3 style={{ marginBottom: '24px', color: 'var(--text-main)', fontWeight: '600', fontSize: '1.3rem' }}>
-      👥 Consulta de Apoderados por Sección
-    </h3>
-    
-    {/* Filtros */}
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
-      <div className="input-group">
-        <label style={{ fontWeight: '500', marginBottom: '6px', display: 'block' }}>Sede</label>
-        <select 
-          value={selectedSede} 
-          onChange={(e) => setSelectedSede(Number(e.target.value))}
-          style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1.5px solid var(--border-input)', fontSize: '0.95rem' }}
-        >
-          {sedes.map(s => <option key={s.idSede} value={s.idSede}>{s.nombre}</option>)}
-        </select>
-      </div>
-      
-      <div className="input-group">
-        <label style={{ fontWeight: '500', marginBottom: '6px', display: 'block' }}>Grado Académico</label>
-        <select 
-          value={selectedGrado} 
-          onChange={(e) => setSelectedGrado(Number(e.target.value))}
-          style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1.5px solid var(--border-input)', fontSize: '0.95rem' }}
-        >
-          {gradosFiltrados.map(g => <option key={g.idGrado} value={g.idGrado}>{g.nombreGrado}</option>)}
-        </select>
-      </div>
-    </div>
+  return (
+    <div className="card">
+      <h3 className="card-title">
+        👥 Consulta de Apoderados por Sección
+      </h3>
 
-    {/* Tabla de Padres */}
-    {loading ? (
-      <p style={{ color: 'var(--text-muted)' }}>Cargando información...</p>
-    ) : (
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
-        <thead>
-          <tr style={{ borderBottom: '2px solid var(--border-light)', color: 'var(--text-muted)', textAlign: 'left' }}>
-            <th style={{ padding: '12px' }}>Nombre del Apoderado</th>
-            <th style={{ padding: '12px' }}>DNI</th>
-            <th style={{ padding: '12px' }}>Estudiante Vinculado</th>
-          </tr>
-        </thead>
-        <tbody>
-          {padres.map((p) => (
-            <tr key={p.idPadre} style={{ borderBottom: '1px solid var(--border-light)' }}>
-              <td style={{ padding: '12px' }}>{p.nombres} {p.apellidos}</td>
-              <td style={{ padding: '12px' }}>{p.nroDocumento || 'N/A'}</td>
-              <td style={{ padding: '12px' }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: '500' }}>
-                  {p.nombreEstudiante} {p.apellidosEstudiante}
-                </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  DNI: {p.dniEstudiante}
-                </div>
-              </td>
+      {/* Filtros */}
+      <div className="form-grid">
+        <div className="input-group">
+          <label className="input-label">Sede</label>
+          <select
+            value={selectedSede}
+            onChange={(e) => setSelectedSede(Number(e.target.value))}
+            className="select"
+          >
+            {sedes.map(s => (
+              <option key={s.idSede} value={s.idSede}>
+                {s.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="input-group">
+          <label className="input-label">Grado Académico</label>
+          <select
+            value={selectedGrado}
+            onChange={(e) => setSelectedGrado(Number(e.target.value))}
+            className="select"
+          >
+            {gradosFiltrados.map(g => (
+              <option key={g.idGrado} value={g.idGrado}>
+                {g.nombreGrado}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Tabla */}
+      {loading ? (
+        <p className="text-muted">Cargando información...</p>
+      ) : padres.length === 0 ? (
+        <div className="empty-state">
+          No hay apoderados registrados para esta selección
+        </div>
+      ) : (
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Nombre del Apoderado</th>
+              <th>DNI</th>
+              <th>Estudiante Vinculado</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    )}
-  </div>
-);
+          </thead>
+          <tbody>
+            {padres.map((p) => (
+              <tr key={p.idPadre}>
+                <td>
+                  {p.nombres} {p.apellidos}
+                </td>
+                <td>
+                  {p.nroDocumento || 'N/A'}
+                </td>
+                <td>
+                  <div style={{ fontWeight: 500 }}>
+                    {p.nombreEstudiante} {p.apellidosEstudiante}
+                  </div>
+                  <div className="text-muted" style={{ fontSize: '0.8rem' }}>
+                    DNI: {p.dniEstudiante}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
 }

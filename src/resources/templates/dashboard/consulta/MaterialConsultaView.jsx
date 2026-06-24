@@ -162,124 +162,160 @@ export function MaterialConsultaView() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      
-      {/* CARD DEL FILTRADOR */}
-      <div style={{ background: 'var(--card-bg)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
-        <h3 style={{ marginBottom: '16px', color: 'var(--text-main)', fontWeight: '600' }}>
+    <div className="page-container">
+
+      {/* CARD FILTRO */}
+      <div className="card">
+        <h3 className="card-title">
           🔍 Consulta de Material de Estudio por Sesión
         </h3>
-        
-        <form onSubmit={handleBuscarMateriales} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-          <div>
-            <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>1. Sede / Campus</label>
-            <select name="idSede" value={seleccion.idSede} onChange={handleFiltroChange} style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1.5px solid var(--border-input)' }}>
-              {sedes.map(s => <option key={s.idSede} value={s.idSede}>{s.nombre}</option>)}
-            </select>
-          </div>
 
-          <div>
-            <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>2. Grado Escolar</label>
-            <select name="idGrado" value={seleccion.idGrado} onChange={handleFiltroChange} disabled={gradosFiltrados.length === 0} style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1.5px solid var(--border-input)' }}>
-              {gradosFiltrados.map(g => <option key={g.idGrado} value={g.idGrado}>{g.nombreGrado} - "{g.seccion}"</option>)}
-            </select>
-          </div>
+        <form onSubmit={handleBuscarMateriales} className="form-grid">
 
-          <div>
-            <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>3. Asignatura / Curso</label>
-            <select name="idCurso" value={seleccion.idCurso} onChange={handleFiltroChange} disabled={cursosFiltrados.length === 0} style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1.5px solid var(--border-input)' }}>
-              {cursosFiltrados.map(c => <option key={c.idCurso} value={c.idCurso}>{c.nombreCurso}</option>)}
-              {cursosFiltrados.length === 0 && <option value="">No hay cursos registrados</option>}
-            </select>
-          </div>
-
-          <div>
-            <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>4. Sesión o Clase</label>
-            <select name="idClase" value={seleccion.idClase} onChange={handleFiltroChange} disabled={clasesFiltradas.length === 0} style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1.5px solid var(--border-input)' }}>
-              {clasesFiltradas.map(cl => (
-                <option key={cl.idClase} value={cl.idClase}>
-                  {new Date(cl.fechaClase).toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'numeric'})} - {cl.titulo}
+          <div className="input-group">
+            <label className="input-label">1. Sede / Campus</label>
+            <select
+              name="idSede"
+              value={seleccion.idSede}
+              onChange={handleFiltroChange}
+              className="select"
+            >
+              {sedes.map(s => (
+                <option key={s.idSede} value={s.idSede}>
+                  {s.nombre}
                 </option>
               ))}
-              {clasesFiltradas.length === 0 && <option value="">Sin clases agendadas</option>}
             </select>
           </div>
 
-          <div style={{ gridColumn: 'span 2', textAlign: 'right', marginTop: '10px' }}>
-            <button type="submit" disabled={loading || clasesFiltradas.length === 0} style={{ padding: '11px 28px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}>
-              {loadingMateriales ? 'Buscando Archivos...' : '📂 Ver Materiales'}
+          <div className="input-group">
+            <label className="input-label">2. Grado Escolar</label>
+            <select
+              name="idGrado"
+              value={seleccion.idGrado}
+              onChange={handleFiltroChange}
+              disabled={gradosFiltrados.length === 0}
+              className="select"
+            >
+              {gradosFiltrados.map(g => (
+                <option key={g.idGrado} value={g.idGrado}>
+                  {g.nombreGrado} - "{g.seccion}"
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">3. Curso</label>
+            <select
+              name="idCurso"
+              value={seleccion.idCurso}
+              onChange={handleFiltroChange}
+              disabled={cursosFiltrados.length === 0}
+              className="select"
+            >
+              {cursosFiltrados.map(c => (
+                <option key={c.idCurso} value={c.idCurso}>
+                  {c.nombreCurso}
+                </option>
+              ))}
+              {cursosFiltrados.length === 0 && (
+                <option value="">No hay cursos</option>
+              )}
+            </select>
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">4. Sesión</label>
+            <select
+              name="idClase"
+              value={seleccion.idClase}
+              onChange={handleFiltroChange}
+              disabled={clasesFiltradas.length === 0}
+              className="select"
+            >
+              {clasesFiltradas.map(cl => (
+                <option key={cl.idClase} value={cl.idClase}>
+                  {new Date(cl.fechaClase).toLocaleDateString('es-ES')} - {cl.titulo}
+                </option>
+              ))}
+              {clasesFiltradas.length === 0 && (
+                <option value="">Sin clases</option>
+              )}
+            </select>
+          </div>
+
+          <div className="form-actions">
+            <button
+              type="submit"
+              disabled={loading || clasesFiltradas.length === 0}
+              className="btn-primary"
+            >
+              {loadingMateriales ? 'Buscando...' : '📂 Ver Materiales'}
             </button>
           </div>
+
         </form>
       </div>
 
-      {/* RECUADRO DE ADVERTENCIA / MENSAJE OPERATIVO */}
+      {/* ALERTA */}
       {mensaje.texto && (
-        <div style={{ 
-          padding: '16px', 
-          borderRadius: '8px', 
-          background: mensaje.tipo === 'error' ? '#fff7ed' : '#f0fdf4', 
-          color: mensaje.tipo === 'error' ? '#c2410c' : '#166534', 
-          border: `1px solid ${mensaje.tipo === 'error' ? '#fed7aa' : '#bbf7d0'}`, 
-          fontWeight: '600',
-          textAlign: 'center'
-        }}>
+        <div className={`alert ${mensaje.tipo === 'error' ? 'error' : 'success'}`}>
           ⚠️ {mensaje.texto}
         </div>
       )}
 
-      {/* VISTA DE REPOSITORIO DE MATERIAL ENCONTRADO */}
+      {/* LISTA DE MATERIALES */}
       {materialesList.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <h4 style={{ margin: 0, fontWeight: '600', color: 'var(--text-main)' }}>📚 Guías y Recursos Didácticos de la Sesión</h4>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }}>
-            {materialesList.map((material) => (
-              <div key={material.idMaterial} style={{ background: 'var(--card-bg)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-light)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <h5 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600', color: 'var(--text-main)' }}>
-                    📖 {material.titulo}
-                  </h5>
-                  <span style={{ fontSize: '0.8rem', background: '#f0f9ff', color: '#0369a1', padding: '4px 8px', borderRadius: '4px', fontWeight: '600', border: '1px solid #e0f2fe' }}>
+        <div className="page-container">
+
+          <h4 className="section-title">
+            📚 Guías y Recursos Didácticos
+          </h4>
+
+          <div className="task-list">
+            {materialesList.map(material => (
+              <div key={material.idMaterial} className="task-card">
+
+                <div className="task-header">
+                  <h5>📖 {material.titulo}</h5>
+                  <span className="task-id">
                     Material #{material.idMaterial}
                   </span>
                 </div>
 
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px', whiteSpace: 'pre-line' }}>
-                  {material.descripcion || "Sin descripción o anotaciones adjuntas."}
+                <p className="task-desc">
+                  {material.descripcion || "Sin descripción disponible."}
                 </p>
 
-                <hr style={{ border: '0', borderTop: '1px solid var(--border-light)', marginBottom: '12px' }} />
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
+                <div className="task-dates">
                   <div>
-                    <span style={{ color: 'var(--text-muted)' }}>🕒 Fecha de Carga al Aula: </span>
-                    <strong style={{ color: 'var(--text-main)' }}>
-                      {/* Formatea la fecha de publicación obtenida del backend */}
-                      {new Date(material.fechaPublicacion + 'T00:00:00').toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'numeric'})}
+                    <span className="text-muted">🕒 Fecha:</span><br />
+                    <strong>
+                      {new Date(material.fechaPublicacion + 'T00:00:00')
+                        .toLocaleDateString('es-ES')}
                     </strong>
                   </div>
-
-                  {material.urlArchivo && (
-                    <div>
-                      <a 
-                        href={material.urlArchivo} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        style={{ color: '#0284c7', textDecoration: 'none', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '4px', background: '#f0f9ff', padding: '6px 12px', borderRadius: '6px', border: '1px solid #bae6fd' }}
-                      >
-                        📥 Descargar Recurso / Abrir Enlace
-                      </a>
-                    </div>
-                  )}
                 </div>
+
+                {material.urlArchivo && (
+                  <a
+                    href={material.urlArchivo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="task-link"
+                  >
+                    📥 Descargar / Abrir
+                  </a>
+                )}
 
               </div>
             ))}
           </div>
+
         </div>
       )}
+
     </div>
   );
 }

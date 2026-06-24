@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+
 import api from '../../../../api'; 
+
 import '../../../static/global.css'; 
 
 export function CursosConsultaView() {

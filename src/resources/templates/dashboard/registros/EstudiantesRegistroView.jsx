@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../../../api'; 
 import '../../../static/global.css'; 
+import '../../../static/Registrar.css'; 
 
 export function EstudiantesRegistroView() {
   const [estudiantesList, setEstudiantesList] = useState([]);
@@ -8,6 +9,7 @@ export function EstudiantesRegistroView() {
   const [grados, setGrados] = useState([]); // Lista global de grados traída del backend
   const [gradosFiltrados, setGradosFiltrados] = useState([]); // 💡 NUEVO: Lista filtrada por la sede seleccionada
   const [editingId, setEditingId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const [formData, setFormData] = useState({
     codigoEstudiante: '',
@@ -19,7 +21,19 @@ export function EstudiantesRegistroView() {
     sexo: 'M', 
     idGrado: '',  
     idSede: '',  
-    montoPension: 0.00
+    montoPension: 0.00,
+    estado: 'ACTIVO',
+    // Nuevos campos
+    celular: '',
+    correo: '',
+    direccion: '',
+    colegioProcedencia: '',
+    tipoAlumno: '',
+    recomendacionesMedicas: '',
+    tieneInformePsicologico: false,
+    tieneCertificadoMedico: false,
+    historialClinico: '',
+    contactoReferencia: ''
   });
 
   const [mensaje, setMensaje] = useState({ texto: '', tipo: '' });
@@ -109,26 +123,48 @@ export function EstudiantesRegistroView() {
       apellidos: estudiante.apellidos,
       fechaNacimiento: estudiante.fechaNacimiento, 
       sexo: estudiante.sexo,
-      idSede: estudiante.idSede || (sedes[0]?.idSede || 1),
-      idGrado: estudiante.idGrado || '', // El useEffect superior se encargará de validar la consistencia
-      montoPension: estudiante.montoPension
+      idSede: estudiante.idSede || '',
+      idGrado: estudiante.idGrado || '',
+      montoPension: estudiante.montoPension,
+      estado: estudiante.estado,
+      // Mapeo de nuevos campos
+      celular: estudiante.celular || '',
+      correo: estudiante.correo || '',
+      direccion: estudiante.direccion || '',
+      colegioProcedencia: estudiante.colegioProcedencia || '',
+      tipoAlumno: estudiante.tipoAlumno || '',
+      recomendacionesMedicas: estudiante.recomendacionesMedicas || '',
+      tieneInformePsicologico: estudiante.tieneInformePsicologico || false,
+      tieneCertificadoMedico: estudiante.tieneCertificadoMedico || false,
+      historialClinico: estudiante.historialClinico || '',
+      contactoReferencia: estudiante.contactoReferencia || ''
     });
-    setMensaje({ texto: `Editando al estudiante: ${estudiante.nombres}`, tipo: 'success' });
   };
 
   const cancelarEdicion = () => {
     setEditingId(null);
-    setFormData({ 
+    setFormData({
       codigoEstudiante: '',
-      idTipoDoc: 1, 
-      nroDocumento: '', 
-      nombres: '', 
-      apellidos: '', 
+      idTipoDoc: 1,
+      nroDocumento: '',
+      nombres: '',
+      apellidos: '',
       fechaNacimiento: '',
       sexo: 'M',
       idSede: sedes[0]?.idSede || '',
-      idGrado: '', // El useEffect relacional calculará el grado inicial de la sede por defecto
-      montoPension: 0.00
+      idGrado: '',
+      montoPension: 0.00,
+      estado: 'ACTIVO',
+      celular: '',
+      correo: '',
+      direccion: '',
+      colegioProcedencia: '',
+      tipoAlumno: '',
+      recomendacionesMedicas: '',
+      tieneInformePsicologico: false,
+      tieneCertificadoMedico: false,
+      historialClinico: '',
+      contactoReferencia: ''
     });
     setMensaje({ texto: '', tipo: '' });
   };
@@ -182,173 +218,294 @@ export function EstudiantesRegistroView() {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '32px', alignItems: 'start' }}>
-      
-      {/* SECCIÓN IZQUIERDA: TABLA DE CONTROL */}
-      <div style={{ background: 'var(--card-bg)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
-        <h3 style={{ marginBottom: '16px', color: 'var(--text-main)', fontWeight: '600' }}>Estudiantes Registrados</h3>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid var(--border-light)', color: 'var(--text-muted)' }}>
-              <th style={{ padding: '10px 5px' }}>Código</th>
-              <th>Nombres y Apellidos</th>
-              <th>Grado</th> 
-              <th>Estado</th>
-              <th style={{ textAlign: 'center' }}>Acciones</th>
+    <div className="page-container">
+
+      {/* Colócalo antes de la tabla */}
+      <button 
+        className="btn-primary" 
+        onClick={() => {
+          cancelarEdicion(); // Limpia el formulario
+          setShowModal(true);
+        }}
+        style={{ marginBottom: '20px' }}
+      >
+        + Nuevo Estudiante
+      </button>
+
+      <table className="table">
+      <thead>
+        <tr>
+          <th>DNI</th>
+          <th>Nombres</th>
+          <th>Apellidos</th>
+          <th>Sede</th>
+          <th>Grado</th>
+          <th>Modalidad</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {estudiantesList.length > 0 ? (
+          estudiantesList.map((est) => (
+            <tr key={est.idEstudiante}>
+              <td>{est.nroDocumento}</td>
+              <td>{est.nombres}</td>
+              <td>{est.apellidos}</td>
+              <td>{est.nombreSede || "N/A"}</td>
+              <td>{est.nombreGrado || "N/A"}</td>
+              <td>{est.tipoAlumno || "Regular"}</td>
+              <td>
+                <span className={est.estado === "ACTIVO" ? "badge-activo" : "badge-inactivo"}>
+                  {est.estado}
+                </span>
+              </td>
+
+              <td>
+                <button className="btn-edit" onClick={() => {
+                    handleEditClick(est);
+                    setShowModal(true);
+                }}>Editar</button>
+
+                <button
+                  className="btn-delete"
+                  onClick={() => handleEliminarLogico(est.idEstudiante, est.nombres)}
+                >
+                  Eliminar
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {estudiantesList.map((e) => (
-              <tr key={e.idEstudiante} style={{ borderBottom: '1px solid var(--border-light)', opacity: e.estado === 'RETIRADO' ? 0.7 : 1 }}>
-                <td style={{ padding: '12px 5px' }}>{e.codigoEstudiante}</td>
-                <td>{e.nombres} {e.apellidos}</td>
-                <td>
-                  <span style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--text-main)', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>
-                    {grados.find(g => g.idGrado === e.idGrado)?.nombreGrado || `Grado (${e.idGrado})`}
-                  </span>
-                </td>
-                <td>
-                  <span style={{
-                    padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '700',
-                    backgroundColor: e.estado === 'ACTIVO' ? '#d1fae5' : 'var(--danger-bg)',
-                    color: e.estado === 'ACTIVO' ? '#065f46' : 'var(--danger-text)'
-                  }}>
-                    {e.estado}
-                  </span>
-                </td>
-                <td style={{ display: 'flex', gap: '8px', justifyContent: 'center', padding: '12px 5px' }}>
-                  {e.estado !== 'RETIRADO' ? (
-                    <>
-                      <button 
-                        onClick={() => handleEditClick(e)}
-                        title="Editar estudiante"
-                        style={{ padding: '6px 10px', background: '#e0f2fe', color: '#0369a1', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '600' }}
-                      >
-                        ✏️
-                      </button>
-                      <button 
-                        onClick={() => handleEliminarLogico(e.idEstudiante, e.nombres)}
-                        title="Dar de baja (Retirar)"
-                        style={{ padding: '6px 10px', background: 'var(--danger-bg)', color: 'var(--danger-text)', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '600' }}
-                      >
-                        🗑️
-                      </button>
-                    </>
-                  ) : (
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic', padding: '6px 0' }}>
-                      🚫 Retirado
-                    </span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* SECCIÓN DERECHA: FORMULARIO DINÁMICO */}
-      <div style={{ background: 'var(--card-bg)', padding: '30px', borderRadius: '12px', border: '1px solid var(--border-light)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-        <div style={{ marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '1.4rem', color: 'var(--text-main)', fontWeight: '600' }}>
-            {editingId ? 'Modificar Estudiante' : 'Registrar Nuevo Estudiante'}
-          </h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            {editingId ? 'Modifica los campos del registro escolar.' : 'Al guardar se le asignará el estado inicial ACTIVO.'}
-          </p>
-        </div>
-
-        {mensaje.texto && (
-          <div style={{
-            backgroundColor: mensaje.tipo === 'success' ? '#d1fae5' : 'var(--danger-bg)',
-            color: mensaje.tipo === 'success' ? '#065f46' : 'var(--danger-text)',
-            padding: '12px', borderRadius: '8px', marginBottom: '20px', fontSize: '0.9rem', fontWeight: '500'
-          }}>
-            {mensaje.texto}
-          </div>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="8">No hay estudiantes</td>
+          </tr>
         )}
+      </tbody>
+    </table>
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div className="input-group">
-              <label>Código Alumno</label>
-              <input type="text" name="codigoEstudiante" value={formData.codigoEstudiante} onChange={handleChange} placeholder="Ej. EST2026" />
-            </div>
-            <div className="input-group">
-              <label>Nro Documento (DNI)</label>
-              <input type="text" name="nroDocumento" maxLength={8} value={formData.nroDocumento} onChange={handleChange} placeholder="Ej. 74859612" />
-            </div>
-          </div>
+    {showModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '12px' }}>
-            <div className="input-group">
-              <label>Nombres</label>
-              <input type="text" name="nombres" value={formData.nombres} onChange={handleChange} />
-            </div>
-            <div className="input-group">
-              <label>Apellidos</label>
-              <input type="text" name="apellidos" value={formData.apellidos} onChange={handleChange} />
-            </div>
-          </div>
+      <div className="flex-between">
+        <h3>
+          {editingId ? 'Editar Estudiante' : 'Registrar Estudiante'}
+        </h3>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '12px' }}>
-            <div className="input-group">
-              <label>Fecha de Nacimiento</label>
-              <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleChange} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1.5px solid var(--border-input)' }} />
-            </div>
-            <div className="input-group">
-              <label>Sexo</label>
-              <select name="sexo" value={formData.sexo} onChange={handleChange} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1.5px solid var(--border-input)' }}>
-                <option value="M">Masculino</option>
-                <option value="F">Femenino</option>
-              </select>
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '12px' }}>
-            {/* Selector de Sede */}
-            <div className="input-group">
-              <label>Sede</label>
-              <select name="idSede" value={formData.idSede} onChange={handleChange} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1.5px solid var(--border-input)' }}>
-                {sedes.map((s) => (
-                  <option key={s.idSede} value={s.idSede}>{s.nombre}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Selector de Grado Académico: Enviando SOLO el ID numérico limpio al backend */}
-            <div className="input-group">
-              <label>Grado Académico</label>
-              <select name="idGrado" value={formData.idGrado} onChange={handleChange} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1.5px solid var(--border-input)' }}>
-                {gradosFiltrados.map((g) => (
-                  // El value SIEMPRE debe ser el id numérico del grado
-                  <option key={g.idGrado} value={Number(g.idGrado)}>
-                    {g.nombreGrado}
-                  </option>
-                ))}
-                {gradosFiltrados.length === 0 && (
-                  <option value="">⚠️ Sin grados en esta sede</option>
-                )}
-              </select>
-            </div>
-          </div>
-
-          <div className="input-group" style={{ marginTop: '12px' }}>
-            <label>Monto Pensión (S/.)</label>
-            <input type="number" step="0.01" name="montoPension" value={formData.montoPension} onChange={handleChange} placeholder="0.00" />
-          </div>
-
-          <button type="submit" className="btn-submit" disabled={loading || gradosFiltrados.length === 0} style={{ marginTop: '24px', width: '100%' }}>
-            {loading ? 'Procesando...' : editingId ? 'Guardar Cambios' : 'Registrar Estudiante'}
-          </button>
-
-
-          {editingId && (
-            <button type="button" onClick={cancelarEdicion} style={{ width: '100%', padding: '12px', marginTop: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', cursor: 'pointer', color: 'var(--text-main)', fontWeight: '600' }}>
-              Cancelar Edición
-            </button>
-          )}
-        </form>
+        <button onClick={() => setShowModal(false)}>X</button>
       </div>
+
+      {/* 👇 PEGA AQUÍ TODO TU FORMULARIO ACTUAL */}
+      <form onSubmit={(e) => {
+        handleSubmit(e);
+        setShowModal(false);
+      }} className="form-grid">
+        
+          <div className="input-group">
+            <label className="input-label">Código Alumno</label>
+            <input 
+              className="input"
+              type="text"
+              name="codigoEstudiante"
+              value={formData.codigoEstudiante}
+              onChange={handleChange}
+              placeholder="Ej. EST2026"
+            />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">DNI</label>
+            <input 
+              className="input"
+              type="text"
+              name="nroDocumento"
+              maxLength={8}
+              value={formData.nroDocumento}
+              onChange={handleChange}
+              placeholder="Ej. 74859612"
+            />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Nombres</label>
+            <input 
+              className="input"
+              type="text"
+              name="nombres"
+              value={formData.nombres}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Apellidos</label>
+            <input 
+              className="input"
+              type="text"
+              name="apellidos"
+              value={formData.apellidos}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Fecha de Nacimiento</label>
+            <input 
+              className="input"
+              type="date"
+              name="fechaNacimiento"
+              value={formData.fechaNacimiento}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Sexo</label>
+            <select 
+              className="select"
+              name="sexo"
+              value={formData.sexo}
+              onChange={handleChange}
+            >
+              <option value="M">Masculino</option>
+              <option value="F">Femenino</option>
+            </select>
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Sede</label>
+            <select 
+              className="select"
+              name="idSede"
+              value={formData.idSede}
+              onChange={handleChange}
+            >
+              {sedes.map((s) => (
+                <option key={s.idSede} value={s.idSede}>
+                  {s.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Grado Académico</label>
+            <select 
+              className="select"
+              name="idGrado"
+              value={formData.idGrado}
+              onChange={handleChange}
+            >
+              {gradosFiltrados.map((g) => (
+                <option key={g.idGrado} value={g.idGrado}>
+                  {g.nombreGrado}
+                </option>
+              ))}
+
+              {gradosFiltrados.length === 0 && (
+                <option value="">⚠️ Sin grados en esta sede</option>
+              )}
+            </select>
+          </div>
+
+          <div className="input-group" style={{ gridColumn: 'span 2' }}>
+            <label className="input-label">Monto Pensión (S/.)</label>
+            <input 
+              className="input"
+              type="number"
+              step="0.01"
+              name="montoPension"
+              value={formData.montoPension}
+              onChange={handleChange}
+              placeholder="0.00"
+            />
+          </div>
+
+          {/* Nuevos Campos */}
+          <div className="input-group">
+            <label className="input-label">Celular</label>
+            <input className="input" type="text" name="celular" value={formData.celular} onChange={handleChange} />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Correo</label>
+            <input className="input" type="email" name="correo" value={formData.correo} onChange={handleChange} />
+          </div>
+
+          <div className="input-group" style={{ gridColumn: 'span 2' }}>
+            <label className="input-label">Dirección</label>
+            <input className="input" type="text" name="direccion" value={formData.direccion} onChange={handleChange} />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Colegio Procedencia</label>
+            <input className="input" type="text" name="colegioProcedencia" value={formData.colegioProcedencia} onChange={handleChange} />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Tipo Alumno</label>
+            <input className="input" type="text" name="tipoAlumno" value={formData.tipoAlumno} onChange={handleChange} />
+          </div>
+
+          <div className="input-group" style={{ gridColumn: 'span 2' }}>
+            <label className="input-label">Recomendaciones Médicas</label>
+            <textarea className="input" name="recomendacionesMedicas" value={formData.recomendacionesMedicas} onChange={handleChange} />
+          </div>
+
+          {/* Checkboxes para booleanos */}
+          <div className="input-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
+            <label className="input-label">
+              <input type="checkbox" name="tieneInformePsicologico" checked={formData.tieneInformePsicologico} onChange={(e) => setFormData({...formData, tieneInformePsicologico: e.target.checked})} />
+              Informe Psicológico
+            </label>
+            <label className="input-label">
+              <input type="checkbox" name="tieneCertificadoMedico" checked={formData.tieneCertificadoMedico} onChange={(e) => setFormData({...formData, tieneCertificadoMedico: e.target.checked})} />
+              Certificado Médico
+            </label>
+          </div>
+
+          <div className="input-group" style={{ gridColumn: 'span 2' }}>
+            <label className="input-label">Historial Clínico</label>
+            <textarea className="input" name="historialClinico" value={formData.historialClinico} onChange={handleChange} />
+          </div>
+
+          <div className="input-group" style={{ gridColumn: 'span 2' }}>
+            <label className="input-label">Contacto Referencia</label>
+            <input className="input" type="text" name="contactoReferencia" value={formData.contactoReferencia} onChange={handleChange} />
+          </div>
+
+          <div className="form-actions">
+            <button 
+              type="submit" 
+              className="btn-primary"
+              disabled={loading || gradosFiltrados.length === 0}
+            >
+              {loading 
+                ? 'Procesando...' 
+                : editingId 
+                  ? 'Guardar Cambios' 
+                  : 'Registrar Estudiante'}
+            </button>
+
+            {editingId && (
+              <button 
+                type="button" 
+                onClick={cancelarEdicion}
+                className="btn-primary"
+                style={{ marginLeft: '10px', background: '#64748b' }}
+              >
+                Cancelar
+              </button>
+            )}
+          </div>
+
+        </form>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

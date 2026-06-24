@@ -53,123 +53,130 @@ export function PadreEstudiantesConsultaView() {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
-      
-      {/* TARJETA DE FILTROS */}
-      {/* SECCIÓN SUPERIOR: FILTROS DE BÚSQUEDA */}
-      <div style={{ background: 'var(--card-bg)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-light)', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-        <h3 style={{ marginBottom: '16px', color: 'var(--text-main)', fontWeight: '600', fontSize: '1.3rem' }}>
+    <div className="page-container">
+
+      {/* FILTROS */}
+      <div className="card">
+        <h3 className="card-title">
           🔍 Consulta de Estudiantes por Secciones
         </h3>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-          {/* Selector de Sede */}
+
+        <div className="form-grid">
+          
+          {/* Sede */}
           <div className="input-group">
-            <label style={{ fontWeight: '500', marginBottom: '6px', display: 'block' }}>Seleccionar Sede</label>
-            <select 
-              value={selectedSede} 
-              onChange={(e) => setSelectedSede(e.target.target ? e.target.value : Number(e.target.value))}
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1.5px solid var(--border-input)', fontSize: '0.95rem' }}
+            <label className="input-label">Seleccionar Sede</label>
+            <select
+              value={selectedSede}
+              onChange={(e) => setSelectedSede(Number(e.target.value))}
+              className="select"
             >
               {sedes.map((s) => (
-                <option key={s.idSede} value={s.idSede}>{s.nombre}</option>
+                <option key={s.idSede} value={s.idSede}>
+                  {s.nombre}
+                </option>
               ))}
             </select>
           </div>
 
-          {/* Selector de Grado */}
+          {/* Grado */}
           <div className="input-group">
-            <label style={{ fontWeight: '500', marginBottom: '6px', display: 'block' }}>Seleccionar Grado Académico</label>
-            <select 
-              value={selectedGrado} 
+            <label className="input-label">Seleccionar Grado Académico</label>
+            <select
+              value={selectedGrado}
               onChange={(e) => setSelectedGrado(Number(e.target.value))}
               disabled={gradosFiltrados.length === 0}
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1.5px solid var(--border-input)', fontSize: '0.95rem' }}
+              className="select"
             >
               {gradosFiltrados.map((g) => (
-                <option key={g.idGrado} value={g.idGrado}>{g.nombreGrado}</option>
+                <option key={g.idGrado} value={g.idGrado}>
+                  {g.nombreGrado}
+                </option>
               ))}
               {gradosFiltrados.length === 0 && (
-                <option value="">⚠️ No hay grados configurados en esta sede</option>
+                <option value="">
+                  ⚠️ No hay grados configurados en esta sede
+                </option>
               )}
             </select>
           </div>
+
         </div>
       </div>
 
-      {/* TABLA DE RESULTADOS */}
-      <div style={{ background: 'var(--card-bg)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid var(--border-light)', color: 'var(--text-muted)' }}>
-              <th style={{ padding: '12px', textAlign: 'left' }}>Nombre del Estudiante</th>
-              <th style={{ padding: '12px', textAlign: 'center' }}>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {estudiantesFiltrados.map((e) => (
-              <tr key={e.idEstudiante} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                <td style={{ padding: '12px' }}>{e.nombres} {e.apellidos}</td>
-                <td style={{ padding: '12px', textAlign: 'center' }}>
-                  <button onClick={() => verPadres(e)} style={{ padding: '6px 12px', background: '#e0f2fe', color: '#0369a1', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '600' }}>
-                    Ver Apoderados
-                  </button>
-                </td>
+      {/* TABLA */}
+      <div className="card">
+        {estudiantesFiltrados.length === 0 ? (
+          <div className="empty-state">
+            No hay estudiantes para la selección actual
+          </div>
+        ) : (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Nombre del Estudiante</th>
+                <th className="text-center">Acción</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {estudiantesFiltrados.map((e) => (
+                <tr key={e.idEstudiante}>
+                  <td>{e.nombres} {e.apellidos}</td>
+                  <td className="text-center">
+                    <button
+                      onClick={() => verPadres(e)}
+                      className="btn-primary"
+                    >
+                      Ver Apoderados
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* PANEL DE APODERADOS */}
       {selectedEstudiante && (
-        <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
-          <h4 style={{ marginBottom: '16px', color: 'var(--text-main)' }}>
+        <div className="card">
+          <h4 className="section-title" style={{ marginBottom: '16px' }}>
             Apoderados de: {selectedEstudiante.nombres} {selectedEstudiante.apellidos}
           </h4>
-          
+
           {loadingPadres ? (
-            <p style={{ color: 'var(--text-muted)' }}>Cargando información...</p>
-          ) : (
-            padres.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {padres.map((p, idx) => (
-                  <div key={idx} style={{ 
-                    padding: '12px', 
-                    background: '#fff', 
-                    borderRadius: '8px', 
-                    border: '1px solid var(--border-light)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                  }}>
+            <p className="text-muted">Cargando información...</p>
+          ) : padres.length > 0 ? (
+            <div className="task-list">
+              {padres.map((p, idx) => (
+                <div key={idx} className="task-card">
+                  
+                  <div className="flex-between">
                     <div>
-                      <strong style={{ display: 'block', color: 'var(--text-main)' }}>
+                      <strong>
                         {p.nombres} {p.apellidos}
                       </strong>
-                      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                      <div className="text-muted">
                         DNI: {p.nroDocumento || 'No registrado'}
-                      </span>
+                      </div>
                     </div>
-                    <span style={{ 
-                      padding: '4px 10px', 
-                      borderRadius: '20px', 
-                      fontSize: '0.75rem', 
-                      fontWeight: '600',
-                      background: '#dcfce7', 
-                      color: '#166534' 
-                    }}>
+
+                    <span className="status active">
                       {p.parentesco}
                     </span>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p style={{ color: 'var(--text-muted)' }}>No se encontraron apoderados vinculados.</p>
-            )
+
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state">
+              No se encontraron apoderados vinculados
+            </div>
           )}
         </div>
       )}
+
     </div>
   );
 }

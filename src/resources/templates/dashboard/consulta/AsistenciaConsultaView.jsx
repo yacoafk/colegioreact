@@ -168,116 +168,173 @@ export function AsistenciaConsultaView() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      
-      {/* CARD DEL BUSCADOR */}
-      <div style={{ background: 'var(--card-bg)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
-        <h3 style={{ marginBottom: '16px', color: 'var(--text-main)', fontWeight: '600' }}>
+    <div className="page-container">
+
+      {/* ===== CARD BUSCADOR ===== */}
+      <div className="card">
+        <h3 className="card-title">
           🔍 Historial y Auditoría de Asistencias Pasadas
         </h3>
-        
-        <form onSubmit={handleBuscarHistorial} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-          <div>
-            <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>1. Sede / Campus</label>
-            <select name="idSede" value={seleccion.idSede} onChange={handleFiltroChange} style={{ width: '100%', padding: '10px', borderRadius: '6px' }}>
-              {sedes.map(s => <option key={s.idSede} value={s.idSede}>{s.nombre}</option>)}
-            </select>
-          </div>
 
-          <div>
-            <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>2. Grado Escolar</label>
-            <select name="idGrado" value={seleccion.idGrado} onChange={handleFiltroChange} disabled={gradosFiltrados.length === 0} style={{ width: '100%', padding: '10px', borderRadius: '6px' }}>
-              {gradosFiltrados.map(g => <option key={g.idGrado} value={g.idGrado}>{g.nombreGrado} - "{g.seccion}"</option>)}
-            </select>
-          </div>
+        <form onSubmit={handleBuscarHistorial} className="form-grid">
 
-          <div>
-            <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>3. Asignatura / Curso</label>
-            <select name="idCurso" value={seleccion.idCurso} onChange={handleFiltroChange} disabled={cursosFiltrados.length === 0} style={{ width: '100%', padding: '10px', borderRadius: '6px' }}>
-              {cursosFiltrados.map(c => <option key={c.idCurso} value={c.idCurso}>{c.nombreCurso}</option>)}
-              {cursosFiltrados.length === 0 && <option value="">No hay cursos registrados</option>}
-            </select>
-          </div>
-
-          <div>
-            <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>4. Fecha y Sesión Evaluada</label>
-            <select name="idClase" value={seleccion.idClase} onChange={handleFiltroChange} disabled={clasesFiltradas.length === 0} style={{ width: '100%', padding: '10px', borderRadius: '6px' }}>
-              {clasesFiltradas.map(cl => (
-                <option key={cl.idClase} value={cl.idClase}>
-                  {new Date(cl.fechaClase).toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'numeric'})} - {cl.titulo}
+          <div className="input-group">
+            <label className="input-label">1. Sede / Campus</label>
+            <select
+              name="idSede"
+              value={seleccion.idSede}
+              onChange={handleFiltroChange}
+              className="select"
+            >
+              {sedes.map(s => (
+                <option key={s.idSede} value={s.idSede}>
+                  {s.nombre}
                 </option>
               ))}
-              {clasesFiltradas.length === 0 && <option value="">Sin clases agendadas</option>}
             </select>
           </div>
 
-          <div style={{ gridColumn: 'span 2', textAlign: 'right', marginTop: '10px' }}>
-            <button type="submit" disabled={loading || clasesFiltradas.length === 0} style={{ padding: '11px 28px', background: '#0369a1', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}>
-              {loadingHistorial ? 'Buscando en Archivos...' : '📂 Recuperar Reporte'}
+          <div className="input-group">
+            <label className="input-label">2. Grado Escolar</label>
+            <select
+              name="idGrado"
+              value={seleccion.idGrado}
+              onChange={handleFiltroChange}
+              disabled={gradosFiltrados.length === 0}
+              className="select"
+            >
+              {gradosFiltrados.map(g => (
+                <option key={g.idGrado} value={g.idGrado}>
+                  {g.nombreGrado} - "{g.seccion}"
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">3. Asignatura / Curso</label>
+            <select
+              name="idCurso"
+              value={seleccion.idCurso}
+              onChange={handleFiltroChange}
+              disabled={cursosFiltrados.length === 0}
+              className="select"
+            >
+              {cursosFiltrados.map(c => (
+                <option key={c.idCurso} value={c.idCurso}>
+                  {c.nombreCurso}
+                </option>
+              ))}
+              {cursosFiltrados.length === 0 && (
+                <option value="">No hay cursos registrados</option>
+              )}
+            </select>
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">4. Fecha y Sesión Evaluada</label>
+            <select
+              name="idClase"
+              value={seleccion.idClase}
+              onChange={handleFiltroChange}
+              disabled={clasesFiltradas.length === 0}
+              className="select"
+            >
+              {clasesFiltradas.map(cl => (
+                <option key={cl.idClase} value={cl.idClase}>
+                  {new Date(cl.fechaClase).toLocaleDateString('es-ES')} - {cl.titulo}
+                </option>
+              ))}
+              {clasesFiltradas.length === 0 && (
+                <option value="">Sin clases agendadas</option>
+              )}
+            </select>
+          </div>
+
+          <div className="form-actions">
+            <button
+              type="submit"
+              disabled={loading || clasesFiltradas.length === 0}
+              className="btn-primary"
+            >
+              {loadingHistorial
+                ? 'Buscando en Archivos...'
+                : '📂 Recuperar Reporte'}
             </button>
           </div>
+
         </form>
       </div>
 
-      {/* RECUADRO DE MENSAJE O ADVERTENCIA ("CLASE SIN REGISTRO DE ASISTENCIA") */}
+      {/* ===== ALERTA ===== */}
       {mensaje.texto && (
-        <div style={{ 
-          padding: '16px', 
-          borderRadius: '8px', 
-          background: mensaje.tipo === 'error' ? '#fff7ed' : '#f0fdf4', 
-          color: mensaje.tipo === 'error' ? '#c2410c' : '#166534', 
-          border: `1px solid ${mensaje.tipo === 'error' ? '#fed7aa' : '#bbf7d0'}`, 
-          fontWeight: '600',
-          textAlign: 'center'
-        }}>
-          {mensaje.tipo === 'error' ? `⚠️ ${mensaje.texto}` : `✔ ${mensaje.texto}`}
+        <div className={`alert ${mensaje.tipo}`}>
+          {mensaje.tipo === 'error'
+            ? `⚠️ ${mensaje.texto}`
+            : `✔ ${mensaje.texto}`}
         </div>
       )}
 
-      {/* REPORTE TABULAR DE ASISTENCIAS GUARDADAS EN EL PASADO */}
+      {/* ===== TABLA HISTORIAL ===== */}
       {historialAlumnos.length > 0 && (
-        <div style={{ background: 'var(--card-bg)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px' }}>
-            <h4 style={{ margin: 0, fontWeight: '600', color: 'var(--text-main)' }}>📋 Alumnado Registrado</h4>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>Modo: Histórico / Solo Lectura</span>
+        <div className="card">
+
+          <div className="flex-between">
+            <h4 className="section-title">
+              📋 Alumnado Registrado
+            </h4>
+
+            <span className="text-muted">
+              Modo: Histórico / Solo Lectura
+            </span>
           </div>
-          
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+
+          <table className="table">
             <thead>
-              <tr style={{ borderBottom: '2px solid var(--border-light)', height: '36px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                <th style={{ padding: '10px' }}>Código Alumno</th>
+              <tr>
+                <th>Código Alumno</th>
                 <th>Apellidos y Nombres</th>
-                <th style={{ textAlign: 'center', width: '180px' }}>Estado Registrado</th>
+                <th className="text-center" style={{ width: '180px' }}>
+                  Estado Registrado
+                </th>
               </tr>
             </thead>
+
             <tbody>
               {historialAlumnos.map(item => (
-                <tr key={item.estudiante.idEstudiante} style={{ borderBottom: '1px solid var(--border-light)', height: '46px' }}>
-                  <td style={{ padding: '10px', fontWeight: '600', color: 'var(--text-muted)' }}>
-                    {item.estudiante.codigoEstudiante || `ALU-${item.estudiante.idEstudiante}`}
+                <tr key={item.estudiante.idEstudiante}>
+
+                  <td className="text-primary">
+                    {item.estudiante.codigoEstudiante ||
+                      `ALU-${item.estudiante.idEstudiante}`}
                   </td>
-                  <td style={{ fontWeight: '500', color: 'var(--text-main)' }}>
+
+                  <td>
                     {`${item.estudiante.apellidos}, ${item.estudiante.nombres}`}
                   </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <span style={{ 
-                      padding: '5px 14px', 
-                      borderRadius: '6px', 
-                      fontSize: '0.8rem', 
-                      fontWeight: '700',
-                      background: item.estado === 'PRESENTE' ? '#dcfce7' : '#fee2e2',
-                      color: item.estado === 'PRESENTE' ? '#15803d' : '#b91c1c',
-                      border: `1px solid ${item.estado === 'PRESENTE' ? '#bbf7d0' : '#fca5a5'}`
-                    }}>
-                      {item.estado === 'PRESENTE' ? '✔ PRESENTE' : '❌ AUSENTE'}
+
+                  <td className="text-center">
+                    <span
+                      className={`status ${
+                        item.estado === 'PRESENTE'
+                          ? 'active'
+                          : 'inactive'
+                      }`}
+                    >
+                      {item.estado === 'PRESENTE'
+                        ? '✔ PRESENTE'
+                        : '❌ AUSENTE'}
                     </span>
                   </td>
+
                 </tr>
               ))}
             </tbody>
           </table>
+
         </div>
       )}
+
     </div>
   );
 }
