@@ -105,9 +105,15 @@ export function EstudiantesRegistroView() {
     } else if (name === 'montoPension') {
       setFormData({ ...formData, [name]: value === '' ? '' : Number(value) });
     } else {
-      const finalValue = ['idTipoDoc', 'idGrado', 'idSede'].includes(name) ? Number(value) : value;
+      const finalValue = ['idTipoDoc', 'idGrado', 'idSede'].includes(name)
+        ? (value === '' ? '' : Number(value))
+        : value;
       setFormData({ ...formData, [name]: finalValue });
     }
+  };
+
+  const dataEnviar = {
+    ...formData,
   };
 
   // 2. PREPARAR EL FORMULARIO PARA EDITAR
@@ -134,8 +140,8 @@ export function EstudiantesRegistroView() {
       colegioProcedencia: estudiante.colegioProcedencia || '',
       tipoAlumno: estudiante.tipoAlumno || '',
       recomendacionesMedicas: estudiante.recomendacionesMedicas || '',
-      tieneInformePsicologico: estudiante.tieneInformePsicologico || false,
-      tieneCertificadoMedico: estudiante.tieneCertificadoMedico || false,
+      tieneInformePsicologico: estudiante.tieneInformePsicologico === true,
+      tieneCertificadoMedico: estudiante.tieneCertificadoMedico === true,
       historialClinico: estudiante.historialClinico || '',
       contactoReferencia: estudiante.contactoReferencia || ''
     });
@@ -175,31 +181,41 @@ export function EstudiantesRegistroView() {
     setLoading(true);
     setMensaje({ texto: '', tipo: '' });
 
-    if (!formData.codigoEstudiante || !formData.nroDocumento || !formData.nombres || !formData.apellidos || !formData.fechaNacimiento || !formData.idGrado || !formData.idSede) {
+    if (
+      !formData.codigoEstudiante ||
+      !formData.nroDocumento ||
+      !formData.nombres ||
+      !formData.apellidos ||
+      !formData.fechaNacimiento ||
+      formData.idGrado === '' ||
+      formData.idSede === ''
+    ) {
       setMensaje({ texto: 'Por favor, rellena todos los campos obligatorios y asegúrate de asignar un grado válido.', tipo: 'error' });
       setLoading(false);
       return;
     }
 
     try {
+      let response;
+
       if (editingId) {
-        await api.put(`estudiantes/modificar/${editingId}`, formData);
-        setMensaje({ texto: `¡Estudiante actualizado con éxito!`, tipo: 'success' });
+        // EDITAR
+        response = await api.put(`estudiantes/modificar/${editingId}`, dataEnviar);
       } else {
-        await api.post('estudiantes/registrar', formData);
-        setMensaje({ texto: `¡Estudiante registrado con éxito!`, tipo: 'success' });
+        // REGISTRAR
+        response = await api.post('estudiantes/registrar', dataEnviar);
       }
-      
+
+      setMensaje({ texto: 'Guardado correctamente', tipo: 'success' });
+
+      listarEstudiantes();
       cancelarEdicion();
-      listarEstudiantes(); 
-    } catch (err) {
-      let errorTexto = 'Ocurrió un error en la operación.';
-      if (err.response?.data) {
-        errorTexto = typeof err.response.data === 'object' 
-          ? err.response.data.message || 'Error en los datos enviados.' 
-          : err.response.data;
-      }
-      setMensaje({ texto: errorTexto, tipo: 'error' });
+      setShowModal(false);
+
+    } catch (error) {
+      console.error("ERROR:", error.response?.data || error.message);
+      setMensaje({ texto: 'Error al guardar', tipo: 'error' });
+      return false;
     } finally {
       setLoading(false);
     }
@@ -253,27 +269,44 @@ export function EstudiantesRegistroView() {
               <td>{est.nroDocumento}</td>
               <td>{est.nombres}</td>
               <td>{est.apellidos}</td>
-              <td>{est.nombreSede || "N/A"}</td>
-              <td>{est.nombreGrado || "N/A"}</td>
-              <td>{est.tipoAlumno || "Regular"}</td>
+              <td>
+                {sedes.find(s => s.idSede === est.idSede)?.nombre || "N/A"}
+              </td>
+
+              <td>
+                {grados.find(g => g.idGrado === est.idGrado)?.nombreGrado || "N/A"}
+              </td>
+              <td>{est.tipoAlumno || "Presencial"}</td>
               <td>
                 <span className={est.estado === "ACTIVO" ? "badge-activo" : "badge-inactivo"}>
                   {est.estado}
                 </span>
               </td>
-
               <td>
-                <button className="btn-edit" onClick={() => {
-                    handleEditClick(est);
-                    setShowModal(true);
-                }}>Editar</button>
+                {est.estado !== 'RETIRADO' ? (
+                  <>
+                    <button 
+                      className="btn-edit" 
+                      onClick={() => {
+                        handleEditClick(est);
+                        setShowModal(true);
+                      }}
+                    >
+                      Editar
+                    </button>
 
-                <button
-                  className="btn-delete"
-                  onClick={() => handleEliminarLogico(est.idEstudiante, est.nombres)}
-                >
-                  Eliminar
-                </button>
+                    <button
+                      className="btn-delete"
+                      onClick={() => handleEliminarLogico(est.idEstudiante, est.nombres)}
+                    >
+                      Eliminar
+                    </button>
+                  </>
+                ) : (
+                  <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>
+                    Sin acciones
+                  </span>
+                )}
               </td>
             </tr>
           ))
@@ -297,11 +330,14 @@ export function EstudiantesRegistroView() {
         <button onClick={() => setShowModal(false)}>X</button>
       </div>
 
-      {/* 👇 PEGA AQUÍ TODO TU FORMULARIO ACTUAL */}
-      <form onSubmit={(e) => {
-        handleSubmit(e);
-        setShowModal(false);
-      }} className="form-grid">
+        <form onSubmit={async (e) => {
+
+          const ok = await handleSubmit(e); 
+
+          if (ok) {
+            setShowModal(false);
+          }
+        }} className="form-grid">
         
           <div className="input-group">
             <label className="input-label">Código Alumno</label>
@@ -492,7 +528,10 @@ export function EstudiantesRegistroView() {
             {editingId && (
               <button 
                 type="button" 
-                onClick={cancelarEdicion}
+                onClick={() => {
+                  cancelarEdicion();
+                  setShowModal(false); 
+                }}
                 className="btn-primary"
                 style={{ marginLeft: '10px', background: '#64748b' }}
               >

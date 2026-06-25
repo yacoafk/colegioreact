@@ -9,6 +9,9 @@ export function PadreRegistroView() {
   const [estudiantes, setEstudiantes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mensaje, setMensaje] = useState({ texto: '', tipo: '' });
+  const [modoEdicion, setModoEdicion] = useState(false);
+  const [idPadreSeleccionado, setIdPadreSeleccionado] = useState(null);
+  const [tiposDoc, setTiposDoc] = useState([]);
 
   const [filtros, setFiltros] = useState({
     idSede: '',
@@ -16,12 +19,32 @@ export function PadreRegistroView() {
     idEstudiante: ''
   });
 
+  const cargarTiposDocumento = async () => {
+    try {
+      const res = await api.get('tipos-documento');
+      setTiposDoc(res.data);
+
+      if (res.data.length > 0) {
+        setPadreData(prev => ({
+          ...prev,
+          idTipoDoc: res.data[0].idTipoDoc
+        }));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const [padreData, setPadreData] = useState({
     idTipoDoc: 1,
     nroDocumento: '',
     nombres: '',
     apellidos: '',
-    parentesco: 'PADRE'
+    parentesco: 'PADRE',
+    celular: '',
+    correo: '',
+    direccion: '',
+    observaciones: ''
   });
 
   useEffect(() => {
@@ -32,13 +55,18 @@ export function PadreRegistroView() {
           api.get('grados'),
           api.get('estudiantes/todos')
         ]);
+
         setSedes(resSedes.data);
         setGrados(resGrados.data);
         setEstudiantes(resEst.data);
+
+        await cargarTiposDocumento(); // 👈 aquí
+
       } catch (err) {
-        console.error("Error cargando datos", err);
+        console.error(err);
       }
     };
+
     fetchData();
   }, []);
 
@@ -47,6 +75,44 @@ export function PadreRegistroView() {
     setGradosFiltrados(filtrados);
     setFiltros(prev => ({ ...prev, idGrado: '', idEstudiante: '' }));
   }, [filtros.idSede, grados]);
+
+  useEffect(() => {
+    const cargarPadre = async () => {
+      if (!filtros.idEstudiante) return;
+
+      try {
+        const res = await api.get(`/padres/estudiante/${filtros.idEstudiante}`);
+
+        if (res.data.length > 0) {
+          const p = res.data[0]; // 👈 tomas el primero
+
+          setModoEdicion(true);
+          setIdPadreSeleccionado(p.idPadre);
+
+          setPadreData({
+            idTipoDoc: p.idTipoDoc || 1,
+            nroDocumento: p.nroDocumento,
+            nombres: p.nombres,
+            apellidos: p.apellidos,
+            parentesco: p.parentesco,
+            celular: p.celular || '',
+            correo: p.correo || '',
+            direccion: p.direccion || '',
+            observaciones: p.observaciones || ''
+          });
+
+        } else {
+          setModoEdicion(false);
+          setIdPadreSeleccionado(null);
+        }
+
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    cargarPadre();
+  }, [filtros.idEstudiante]);
 
   const handleSubmitPadre = async (e) => {
     e.preventDefault();
@@ -67,7 +133,11 @@ export function PadreRegistroView() {
         nroDocumento: '',
         nombres: '',
         apellidos: '',
-        parentesco: 'PADRE'
+        parentesco: 'PADRE',
+        celular: '',
+        correo: '',
+        direccion: '',
+        observaciones: ''
       });
 
     } catch (err) {
@@ -81,70 +151,61 @@ export function PadreRegistroView() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="page-container">
 
       {/* CARD PRINCIPAL */}
-      <div style={{
-        background: 'var(--card-bg)',
-        padding: '24px',
-        borderRadius: '12px',
-        border: '1px solid var(--border-light)'
-      }}>
-        <h3 style={{
-          marginBottom: '16px',
-          color: 'var(--text-main)',
-          fontWeight: '600'
-        }}>
+      <div className="card">
+        <h3 className="card-title">
           👨‍👩‍👧 Registro de Apoderados
         </h3>
 
         {/* FILTROS */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gap: '16px'
-        }}>
+        <div className="form-grid">
 
-          <div>
-            <label style={{ fontWeight: '500', marginBottom: '4px', display: 'block' }}>
-              1. Sede
-            </label>
+          <div className="input-group">
+            <label className="input-label">1. Sede</label>
             <select
+              className="select"
               value={filtros.idSede}
-              onChange={(e) => setFiltros({ ...filtros, idSede: e.target.value })}
-              style={{ width: '100%', padding: '10px', borderRadius: '6px' }}
+              onChange={(e) =>
+                setFiltros({ ...filtros, idSede: e.target.value })
+              }
             >
               <option value="">Seleccione...</option>
               {sedes.map(s => (
-                <option key={s.idSede} value={s.idSede}>{s.nombre}</option>
+                <option key={s.idSede} value={s.idSede}>
+                  {s.nombre}
+                </option>
               ))}
             </select>
           </div>
 
-          <div>
-            <label style={{ fontWeight: '500', marginBottom: '4px', display: 'block' }}>
-              2. Grado
-            </label>
+          <div className="input-group">
+            <label className="input-label">2. Grado</label>
             <select
+              className="select"
               value={filtros.idGrado}
-              onChange={(e) => setFiltros({ ...filtros, idGrado: e.target.value })}
-              style={{ width: '100%', padding: '10px', borderRadius: '6px' }}
+              onChange={(e) =>
+                setFiltros({ ...filtros, idGrado: e.target.value })
+              }
             >
               <option value="">Seleccione...</option>
               {gradosFiltrados.map(g => (
-                <option key={g.idGrado} value={g.idGrado}>{g.nombreGrado}</option>
+                <option key={g.idGrado} value={g.idGrado}>
+                  {g.nombreGrado}
+                </option>
               ))}
             </select>
           </div>
 
-          <div>
-            <label style={{ fontWeight: '500', marginBottom: '4px', display: 'block' }}>
-              3. Estudiante
-            </label>
+          <div className="input-group">
+            <label className="input-label">3. Estudiante</label>
             <select
+              className="select"
               value={filtros.idEstudiante}
-              onChange={(e) => setFiltros({ ...filtros, idEstudiante: e.target.value })}
-              style={{ width: '100%', padding: '10px', borderRadius: '6px' }}
+              onChange={(e) =>
+                setFiltros({ ...filtros, idEstudiante: e.target.value })
+              }
             >
               <option value="">Seleccione...</option>
               {estudiantes
@@ -165,44 +226,25 @@ export function PadreRegistroView() {
 
       {/* FORMULARIO */}
       {filtros.idEstudiante && (
-        <div style={{
-          background: 'var(--card-bg)',
-          padding: '24px',
-          borderRadius: '12px',
-          border: '1px solid var(--border-light)'
-        }}>
+        <div className="card">
 
-          <h4 style={{ marginBottom: '16px', color: 'var(--text-main)' }}>
+          <h4 className="section-title">
             ✍ Datos del Apoderado
           </h4>
 
           {mensaje.texto && (
-            <div style={{
-              padding: '14px',
-              borderRadius: '8px',
-              background: mensaje.tipo === 'error' ? '#fff7ed' : '#f0fdf4',
-              color: mensaje.tipo === 'error' ? '#c2410c' : '#166534',
-              border: `1px solid ${mensaje.tipo === 'error' ? '#fed7aa' : '#bbf7d0'}`,
-              marginBottom: '16px',
-              textAlign: 'center',
-              fontWeight: '600'
-            }}>
+            <div className={`alert ${mensaje.tipo === 'error' ? 'error' : 'success'}`}>
               {mensaje.texto}
             </div>
           )}
 
           <form onSubmit={handleSubmitPadre}>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '16px'
-            }}>
+            <div className="form-grid">
 
-              <div>
-                <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>
-                  DNI
-                </label>
+              <div className="input-group">
+                <label className="input-label">DNI</label>
                 <input
+                  className="input"
                   required
                   maxLength={8}
                   value={padreData.nroDocumento}
@@ -212,20 +254,20 @@ export function PadreRegistroView() {
                       nroDocumento: e.target.value.replace(/\D/g, '')
                     })
                   }
-                  style={{ width: '100%', padding: '10px', borderRadius: '6px' }}
                 />
               </div>
 
-              <div>
-                <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>
-                  Parentesco
-                </label>
+              <div className="input-group">
+                <label className="input-label">Parentesco</label>
                 <select
+                  className="select"
                   value={padreData.parentesco}
                   onChange={e =>
-                    setPadreData({ ...padreData, parentesco: e.target.value })
+                    setPadreData({
+                      ...padreData,
+                      parentesco: e.target.value
+                    })
                   }
-                  style={{ width: '100%', padding: '10px', borderRadius: '6px' }}
                 >
                   <option value="PADRE">Padre</option>
                   <option value="MADRE">Madre</option>
@@ -233,56 +275,115 @@ export function PadreRegistroView() {
                 </select>
               </div>
 
-              <div>
-                <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>
-                  Nombres
-                </label>
+              <div className="input-group">
+                <label className="input-label">Nombres</label>
                 <input
+                  className="input"
                   required
                   value={padreData.nombres}
                   onChange={e =>
-                    setPadreData({ ...padreData, nombres: e.target.value })
+                    setPadreData({
+                      ...padreData,
+                      nombres: e.target.value
+                    })
                   }
-                  style={{ width: '100%', padding: '10px', borderRadius: '6px' }}
                 />
               </div>
 
-              <div>
-                <label style={{ fontWeight: '500', display: 'block', marginBottom: '4px' }}>
-                  Apellidos
-                </label>
+              <div className="input-group">
+                <label className="input-label">Apellidos</label>
                 <input
+                  className="input"
                   required
                   value={padreData.apellidos}
                   onChange={e =>
-                    setPadreData({ ...padreData, apellidos: e.target.value })
+                    setPadreData({
+                      ...padreData,
+                      apellidos: e.target.value
+                    })
                   }
-                  style={{ width: '100%', padding: '10px', borderRadius: '6px' }}
                 />
               </div>
 
             </div>
+            <div className="input-group">
+              <label className="input-label">Celular</label>
+              <input
+                className="input"
+                maxLength={9}
+                value={padreData.celular}
+                onChange={e =>
+                  setPadreData({
+                    ...padreData,
+                    celular: e.target.value.replace(/\D/g, '')
+                  })
+                }
+              />
+            </div>
 
-            <div style={{ marginTop: '20px', textAlign: 'right' }}>
+            <div className="input-group">
+              <label className="input-label">Correo</label>
+              <input
+                type="email"
+                className="input"
+                value={padreData.correo}
+                onChange={e =>
+                  setPadreData({
+                    ...padreData,
+                    correo: e.target.value
+                  })
+                }
+              />
+            </div>
+
+            <div className="input-group">
+              <label className="input-label">Dirección</label>
+              <input
+                className="input"
+                value={padreData.direccion}
+                onChange={e =>
+                  setPadreData({
+                    ...padreData,
+                    direccion: e.target.value
+                  })
+                }
+              />
+            </div>
+
+            <div className="input-group full-width">
+              <label className="input-label">Observaciones</label>
+              <textarea
+                className="input"
+                rows={3}
+                value={padreData.observaciones}
+                onChange={e =>
+                  setPadreData({
+                    ...padreData,
+                    observaciones: e.target.value
+                  })
+                }
+              />
+            </div>
+
+            <div className="form-actions">
               <button
                 type="submit"
+                className="btn-primary"
                 disabled={loading}
-                style={{
-                  padding: '11px 28px',
-                  background: '#0369a1',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontWeight: '600'
-                }}
               >
-                {loading ? 'Registrando...' : '💾 Guardar Apoderado'}
+                {loading
+                  ? 'Procesando...'
+                  : modoEdicion
+                    ? '✏️ Actualizar Apoderado'
+                    : '💾 Guardar Apoderado'
+                }
               </button>
             </div>
+
           </form>
         </div>
       )}
+
     </div>
   );
 }
