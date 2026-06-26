@@ -1,0 +1,173 @@
+/* CONTENEDOR GENERAL */
+.page-container {
+  padding: 25px;
+  background: var(--body-bg);
+  min-height: 100%;
+}
+
+/* TITULO DEL CURSO */
+.page-container h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 25px;
+}
+
+/* CARD DE CLASE */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* TITULO CLASE */
+.card h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 15px;
+}
+
+/* SUBTITULOS */
+.card h5 {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 15px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* LISTAS */
+.card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* ITEMS */
+.card li {
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--text-main);
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+/* HOVER ITEM */
+.card li:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* MENSAJES VACIOS */
+.card p {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* LOADING */
+.page-container p {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+/* BOTÓN VOLVER (si lo usas arriba) */
+.back-button {
+  margin-bottom: 20px;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
+
+/* Asegúrate de que tus variables estén definidas en un global.css o similar */
+
+.main-title {
+    color: var(--text-main);
+    margin-bottom: 20px;
+}
+
+.card-clase {
+    background: var(--card-bg);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.clase-header {
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.clase-header h3 { color: var(--primary-color); }
+.clase-desc { color: var(--text-muted); margin: 8px 0; }
+
+.clase-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.btn-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.clase-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.section h5 {
+    color: var(--text-main);
+    margin-bottom: 10px;
+    border-left: 3px solid var(--primary-color);
+    padding-left: 10px;
+}
+
+.section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.section li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-muted);
+}
+
+.loading-msg, .empty-msg {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 40px;
+}

@@ -26,12 +26,17 @@ import { AsistenciaConsultaView } from './consulta/AsistenciaConsultaView';
 import { TareaConsultaView } from './consulta/TareaConsultaView'; 
 import { MaterialConsultaView } from './consulta/MaterialConsultaView'; 
 
+import { EstudiantesContraseniaView } from './estudiantes/EstudiantesContraseniaView'; 
+import { EstudiantesCursosView } from './estudiantes/EstudiantesCursosView'; 
+import { EstudiantesContenidosView } from './estudiantes/EstudiantesContenidosView'; 
+
 import '../../static/Dashboard.css';
 import '../../static/global.css';
 
 export function DashboardHome() {
   const [userName, setUserName] = useState('Usuario');
   const [currentView, setCurrentView] = useState('funciones'); 
+  const [cursoSeleccionado, setCursoSeleccionado] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -238,6 +243,35 @@ export function DashboardHome() {
                 ← Volver al Menú Principal
               </button>
               <MaterialConsultaView />
+            </div>
+          )}
+
+
+
+
+          {currentView === 'estudiantes-contrasenia' && (
+            <div>
+              <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                ← Volver al Menú Principal
+              </button>
+              <EstudiantesContraseniaView/>
+            </div>
+          )}
+
+          {/* 📚 LISTA DE CURSOS */}
+          {currentView === 'estudiantes-cursos' && (
+            <EstudiantesCursosView 
+              onSelectCurso={(id) => {
+                setCursoSeleccionado(id);
+                setCurrentView('estudiantes-contenidos');
+              }} 
+            />
+          )}
+
+          {/* 📂 CONTENIDO DEL CURSO */}
+          {currentView === 'estudiantes-contenidos' && (
+            <div>
+              <EstudiantesContenidosView idCurso={cursoSeleccionado} />
             </div>
           )}
 

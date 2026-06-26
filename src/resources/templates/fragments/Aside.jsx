@@ -7,6 +7,7 @@ import '../../static/global.css';
 import { GrupoRegistrar } from "../dashboard/funciones/GrupoRegistrar";
 import { GrupoProfesor } from "../dashboard/funciones/GrupoProfesor";
 import { GrupoConsultas } from "../dashboard/funciones/GrupoConsultas";
+import { GrupoEstudiante } from "../dashboard/funciones/GrupoEstudiantes";
 
 export function Aside({ onViewChange, currentView }) {
   const [user, setUser] = useState(null);
@@ -24,6 +25,8 @@ export function Aside({ onViewChange, currentView }) {
   const isPersonal = user.tipoUsuario === "PERSONAL";
   const esAdmin = isPersonal && user.rolDetallado === "ADMINISTRADOR";
   const esProfesor = isPersonal && user.rolDetallado === "PROFESOR";
+
+  const isEstudiante = user.tipoUsuario === "ESTUDIANTE";
 
   return (
     <aside className="dashboard-sidebar">
@@ -64,13 +67,15 @@ export function Aside({ onViewChange, currentView }) {
           />
         )}
 
-        {/* OTROS ROLES */}
-        {!esAdmin && !esProfesor && (
-          <div className="sidebar-warning">
-            <p>⚠️ Acceso limitado</p>
-            <small>Rol: {user.rolDetallado}</small>
-          </div>
+
+        {/* PROFESOR */}
+        {isEstudiante && (
+          <GrupoEstudiante
+            onViewChange={onViewChange} 
+            currentView={currentView} 
+          />
         )}
+
       </nav>
     </aside>
   );
