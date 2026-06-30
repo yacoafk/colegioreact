@@ -26,9 +26,16 @@ import { AsistenciaConsultaView } from './consulta/AsistenciaConsultaView';
 import { TareaConsultaView } from './consulta/TareaConsultaView'; 
 import { MaterialConsultaView } from './consulta/MaterialConsultaView'; 
 
+
 import { EstudiantesContraseniaView } from './estudiantes/EstudiantesContraseniaView'; 
 import { EstudiantesCursosView } from './estudiantes/EstudiantesCursosView'; 
 import { EstudiantesContenidosView } from './estudiantes/EstudiantesContenidosView'; 
+import { EstudiantesDetallesView } from './estudiantes/EstudiantesDetallesView'; 
+
+
+import { ProfesoresCursosView } from './profesores/ProfesoresCursosView'; 
+import { ProfesoresContenidosView } from './profesores/ProfesoresContenidosView'; 
+import { ProfesoresDetallesView } from './profesores/ProfesoresDetallesView'; 
 
 import '../../static/Dashboard.css';
 import '../../static/global.css';
@@ -38,6 +45,8 @@ export function DashboardHome() {
   const [currentView, setCurrentView] = useState('funciones'); 
   const [cursoSeleccionado, setCursoSeleccionado] = useState(null);
   const navigate = useNavigate();
+  const [detalleSeleccionado, setDetalleSeleccionado] = useState(null);
+  const [tipoDetalle, setTipoDetalle] = useState(null);
 
   useEffect(() => {
     const session = localStorage.getItem('user_session');
@@ -62,7 +71,9 @@ export function DashboardHome() {
         <Header userName={userName} onLogout={handleLogout} />
 
         <main className="dashboard-content">
+
  
+           {/* REGISTROS ADMINISTRADOR */}
           {currentView === 'registrar-personal' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -71,7 +82,6 @@ export function DashboardHome() {
               <PersonalRegistroView />
             </div>
           )}
-
           {currentView === 'registrar-sede' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -80,7 +90,6 @@ export function DashboardHome() {
               <SedeRegistroView />
             </div>
           )}
-
           {currentView === 'registrar-roles' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -89,7 +98,6 @@ export function DashboardHome() {
               <RolRegistroView /> 
             </div>
           )}
-
           {currentView === 'registrar-estudiantes' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -98,7 +106,6 @@ export function DashboardHome() {
               <EstudiantesRegistroView />
             </div>
           )}
-
           {currentView === 'registrar-grados' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -108,7 +115,6 @@ export function DashboardHome() {
               <GradosRegistroView />
             </div>
           )}
-
           {currentView === 'registrar-cursos' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -117,7 +123,6 @@ export function DashboardHome() {
               <CursosRegistroView />
             </div>
           )}
-
           {currentView === 'registrar-clases' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -134,7 +139,6 @@ export function DashboardHome() {
               <AsistenciaRegistroView />
             </div>
           )}
-
           {currentView === 'registrar-tareas' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -143,7 +147,6 @@ export function DashboardHome() {
               <TareasRegistroView />
             </div>
           )}
-
           {currentView === 'registrar-tipo-documento' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -152,7 +155,6 @@ export function DashboardHome() {
               <TipoDocumentoRegistroView />
             </div>
           )}
-
           {currentView === 'registrar-material' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -161,7 +163,6 @@ export function DashboardHome() {
               <MaterialRegistroView />
             </div>
           )}
-
           {currentView === 'registrar-padre' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -173,8 +174,7 @@ export function DashboardHome() {
 
 
 
-
-
+          {/* CONSULTAS */}
           {currentView === 'consulta-estudiantes' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -183,8 +183,6 @@ export function DashboardHome() {
               <EstudiantesConsultaView />
             </div>
           )}
-
-
           {currentView === 'consulta-personal' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -193,7 +191,6 @@ export function DashboardHome() {
               <PersonalConsultaView />
             </div>
           )}
-
           {currentView === 'consulta-padre-estudiantes' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -202,7 +199,6 @@ export function DashboardHome() {
               <PadreEstudiantesConsultaView />
             </div>
           )}
-
           {currentView === 'consulta-padre' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -211,7 +207,6 @@ export function DashboardHome() {
               <PadreConsultaView />
             </div>
           )}
-
           {currentView === 'consulta-cursos' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -220,7 +215,6 @@ export function DashboardHome() {
               <CursosConsultaView />
             </div>
           )}
-
           {currentView === 'consulta-asistencia' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -248,30 +242,66 @@ export function DashboardHome() {
 
 
 
+          {/* PROFESORES*/}
+          {currentView === 'profesores-cursos' && (
+              <ProfesoresCursosView 
+                onSelectCurso={(curso) => {
+                  setCursoSeleccionado(curso);
+                  setCurrentView('profesores-contenidos');
+                }}
+              />
+          )}
+          {currentView === 'profesores-contenidos' && (
+            <ProfesoresContenidosView 
+              idCurso={cursoSeleccionado}
+            onSelectDetalle={(tipo, data) => {
+              setTipoDetalle(tipo);
+              setDetalleSeleccionado(data);
+              setCurrentView('profesores-detalle');
+            }}
+            />
+          )}
+          {currentView === 'profesores-detalle' && (
+            <ProfesoresDetallesView
+              tipo={tipoDetalle}
+              data={detalleSeleccionado}
+              onBack={() => setCurrentView('profesores-contenidos')}
+            />
+          )}
 
+
+          {/* ESTUDIANTES */}
+          {currentView === 'estudiantes-cursos' && (
+            <EstudiantesCursosView 
+              onSelectCurso={(curso) => {
+                setCursoSeleccionado(curso);
+                setCurrentView('estudiantes-contenidos');
+              }}
+            />
+          )}
+          {currentView === 'estudiantes-contenidos' && (
+            <EstudiantesContenidosView 
+              idCurso={cursoSeleccionado}
+              onSelectDetalle={(tipo, data) => {
+                setTipoDetalle(tipo);
+                setDetalleSeleccionado(data);
+                setCurrentView('estudiantes-detalle');
+              }}
+            />
+          )}
+          {currentView === 'estudiantes-detalle' && (
+            <EstudiantesDetallesView
+              tipo={tipoDetalle}
+              data={detalleSeleccionado}
+              onBack={() => setCurrentView('estudiantes-contenidos')}
+            />
+          )}
           {currentView === 'estudiantes-contrasenia' && (
             <div>
               <button onClick={() => setCurrentView('funciones')} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '600', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
                 ← Volver al Menú Principal
               </button>
               <EstudiantesContraseniaView/>
-            </div>
-          )}
-
-          {/* 📚 LISTA DE CURSOS */}
-          {currentView === 'estudiantes-cursos' && (
-            <EstudiantesCursosView 
-              onSelectCurso={(id) => {
-                setCursoSeleccionado(id);
-                setCurrentView('estudiantes-contenidos');
-              }} 
-            />
-          )}
-
-          {/* 📂 CONTENIDO DEL CURSO */}
-          {currentView === 'estudiantes-contenidos' && (
-            <div>
-              <EstudiantesContenidosView idCurso={cursoSeleccionado} />
             </div>
           )}
 

@@ -171,3 +171,122 @@
     text-align: center;
     padding: 40px;
 }
+
+.btn-videoconferencia {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.btn-videoconferencia:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-videoconferencia:active {
+  transform: translateY(0);
+}
+
+
+/* 🔥 BOTONES PROFESOR */
+.acciones-profesor {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 15px 0;
+}
+
+.btn-material {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-material:hover {
+  background: #0056b3;
+}
+
+.btn-tarea {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-tarea:hover {
+  background: #1e7e34;
+}
+
+.clase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.clase-header:hover {
+  background: #f1f1f1;
+}
+
+/* IZQUIERDA */
+.clase-header-left {
+  flex: 1;
+}
+
+.clase-header-left h3 {
+  margin: 0;
+}
+
+.clase-desc {
+  margin: 5px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+/* DERECHA 🔥 */
+.clase-header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* BOTÓN ASISTENCIA */
+.btn-asistencia {
+  background: #28a745;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.btn-asistencia:hover {
+  background: #1e7e34;
+}

@@ -9,10 +9,15 @@ import '../../../static/Registrar.css';
 import '../../../static/global.css'; 
 import '../../../static/Contenido.css'; 
 
-export function EstudiantesContenidosView({ idCurso }) {
+export function EstudiantesContenidosView({ idCurso, onSelectDetalle  }) {
   const [curso, setCurso] = useState(null);
   const [loading, setLoading] = useState(false);
   const [claseActiva, setClaseActiva] = useState(null);
+  const [materialActivo, setMaterialActivo] = useState(null);
+  const [tareaActiva, setTareaActiva] = useState(null);
+  const [detalleSeleccionado, setDetalleSeleccionado] = useState(null);
+  const [tipoDetalle, setTipoDetalle] = useState(null); // "material" o "tarea"
+
 
   useEffect(() => {
     const cargarContenido = async () => {
@@ -70,7 +75,12 @@ export function EstudiantesContenidosView({ idCurso }) {
                 <div className="clase-meta">
 
                   {clase.urlVideoconferencia && (
-                    <a href={clase.urlVideoconferencia} target="_blank" className="btn-link">
+                    <a 
+                      href={clase.urlVideoconferencia} 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      className="btn-videoconferencia"
+                    >
                       🎥 Unirse a clase
                     </a>
                   )}
@@ -83,7 +93,15 @@ export function EstudiantesContenidosView({ idCurso }) {
                     {clase.materiales?.length > 0 ? (
                       <ul>
                         {clase.materiales.map(m => (
-                          <li key={m.idMaterial}>{m.titulo}</li>
+                          <li 
+                            key={m.idMaterial}
+                              onClick={() => {
+                                onSelectDetalle("material", m);
+                              }}
+                            style={{ cursor: 'pointer', color: '#007bff' }}
+                          >
+                            📄 {m.titulo}
+                          </li>
                         ))}
                       </ul>
                     ) : <p>Sin materiales</p>}
@@ -94,7 +112,15 @@ export function EstudiantesContenidosView({ idCurso }) {
                     {clase.tareas?.length > 0 ? (
                       <ul>
                         {clase.tareas.map(t => (
-                          <li key={t.idTarea}>{t.titulo}</li>
+                          <li 
+                            key={t.idTarea}
+                              onClick={() => {
+                                onSelectDetalle("tarea", t);
+                              }}
+                            style={{ cursor: 'pointer', color: '#28a745' }}
+                          >
+                            📝 {t.titulo}
+                          </li>
                         ))}
                       </ul>
                     ) : <p>Sin tareas</p>}

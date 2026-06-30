@@ -15,6 +15,7 @@ export function GrupoProfesor({ onViewChange, currentView }) {
 
   // ✅ Detecta si estás dentro de una vista del profesor
   const vistaPerteneceAProfesor = [
+    'profesores-cursos',
     'registrar-clases',
     'registrar-asistencia',
     'registrar-tareas',
@@ -33,6 +34,14 @@ export function GrupoProfesor({ onViewChange, currentView }) {
 
         {openProfesor && (
         <div className="sub-menu">
+
+          <button 
+            onClick={() => onViewChange('profesores-cursos')}
+            className={`sub-item ${currentView === 'registrar-clases' ? 'active' : ''}`}
+          >
+            Cursos
+          </button>
+
           <button 
             onClick={() => onViewChange('registrar-clases')}
             className={`sub-item ${currentView === 'registrar-clases' ? 'active' : ''}`}
