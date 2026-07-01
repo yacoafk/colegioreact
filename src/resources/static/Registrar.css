@@ -47,3 +47,16 @@
     max-height: 90vh;
     overflow-y: auto;
 }
+
+input, textarea {
+  width: 100%;
+  box-sizing: border-box; /* Crucial para que el padding no rompa el diseño */
+  font-family: inherit;
+  font-size: 14px;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px rgba(60, 107, 236, 0.2);
+}

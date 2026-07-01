@@ -1,0 +1,59 @@
+/* Contenedor y texto */
+.clase-info {
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+}
+
+.alert {
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+.alert-success { background: #d1fae5; color: #065f46; }
+.alert-error { background: var(--danger-bg); color: var(--danger-text); }
+
+/* Lista de alumnos */
+.alumno-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.2s;
+}
+.alumno-item:hover { background: #fdfdfd; }
+
+.alumno-nombre { font-weight: 500; color: var(--text-main); }
+
+/* Botones de selección */
+.acciones-asistencia { display: flex; gap: 8px; }
+
+.btn-asistencia-op {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border-input);
+  background: white;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.activo-si {
+  background: #22c55e !important;
+  color: white !important;
+  border-color: #16a34a !important;
+}
+
+.activo-no {
+  background: #ef4444 !important;
+  color: white !important;
+  border-color: #dc2626 !important;
+}
+
+.btn-asistencia-op:hover { border-color: var(--primary-color); }

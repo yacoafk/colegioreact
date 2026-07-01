@@ -10,9 +10,11 @@ import '../../../static/global.css';
 import '../../../static/Contenido.css'; 
 import '../../../static/Detalles.css'; 
 
-export function ProfesoresDetallesView({ tipo, data, onBack }) {
+export function ProfesoresDetallesView({ data, onBack }) {
 
   if (!data) return <div>No hay datos</div>;
+
+  const tipo = data.tipo;
 
   return (
     <div className="page-container2">
@@ -25,7 +27,7 @@ export function ProfesoresDetallesView({ tipo, data, onBack }) {
         onClick={() => console.log("Editar", data.idMaterial || data.idTarea)}
       >
         ✏️ Editar
-      </button>
+      </button>  
 
       {tipo === "material" && (
         <>

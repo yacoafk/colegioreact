@@ -8,11 +8,74 @@ import '../../../static/Dashboard.css';
 import '../../../static/Registrar.css'; 
 import '../../../static/global.css'; 
 import '../../../static/Contenido.css'; 
+import '../../../static/Modal.css'; 
 
-export function ProfesoresContenidosView({idCurso, onRegistrarMaterial, onRegistrarTarea, onSelectDetalle }) {
+export function ProfesoresContenidosView({idCurso, onRegistrarMaterial, onRegistrarTarea, onRegistrarAsistencia, onSelectDetalle }) {
   const [curso, setCurso] = useState(null);
   const [loading, setLoading] = useState(false);
   const [claseActiva, setClaseActiva] = useState(null);
+  const [mostrarFormClase, setMostrarFormClase] = useState(false);
+
+  const [formClase, setFormClase] = useState({
+    titulo: "",
+    descripcion: "",
+    fechaClase: "",
+    fechaTermino: "",
+    urlVideoconferencia: ""
+  });
+
+
+  const handleChangeClase = (e) => {
+    const { name, value } = e.target;
+    setFormClase(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+
+  const handleGuardarClase = async () => {
+    try {
+      if (!formClase.titulo || !formClase.fechaClase || !formClase.fechaTermino) {
+        alert("Completa los campos obligatorios");
+        return;
+      }
+
+      if (new Date(formClase.fechaClase) >= new Date(formClase.fechaTermino)) {
+        alert("La fecha fin debe ser mayor");
+        return;
+      }
+
+      const payload = {
+        idCurso: idCurso,
+        ...formClase // Aquí usas directamente el estado
+      };
+
+      await api.post("/clases/registrar", payload);
+
+      alert("Clase creada correctamente");
+
+      // 1. LIMPIAR EL ESTADO DEL FORMULARIO
+      setFormClase({
+        titulo: "",
+        descripcion: "",
+        fechaClase: "",
+        fechaTermino: "",
+        urlVideoconferencia: ""
+      });
+
+      // 2. CERRAR EL MODAL
+      setMostrarFormClase(false);
+
+      // 3. RECARGAR CONTENIDO
+      const res = await api.get(`/cursos/${idCurso}/contenido`);
+      setCurso(res.data);
+
+    } catch (err) {
+      console.error(err);
+      alert("Error al crear clase");
+    }
+  };
 
   useEffect(() => {
     const cargarContenido = async () => {
@@ -33,9 +96,67 @@ export function ProfesoresContenidosView({idCurso, onRegistrarMaterial, onRegist
   if (loading) return <div className="loading-msg">Cargando contenido...</div>;
   if (!curso) return <div className="empty-msg">No se encontró el curso.</div>;
 
-  return (
-    <div className="page-container">
-      <h2 className="main-title">👨‍🏫 {curso.nombreCurso}</h2>
+return (
+  <div className="page-container">
+
+    <h2 className="main-title">👨‍🏫 {curso.nombreCurso}</h2>
+
+    {/* BOTÓN */}
+    <button
+      onClick={() => setMostrarFormClase(true)}
+      style={{
+        marginBottom: "15px",
+        padding: "10px 15px",
+        background: "#2563eb",
+        color: "white",
+        border: "none",
+        borderRadius: "8px",
+        cursor: "pointer"
+      }}
+    >
+      ➕ Agregar clase
+    </button>
+
+    {/* 🔥 FORM FUERA DEL MAP */}
+    {mostrarFormClase && (
+      <div className="modal-overlay" onClick={() => setMostrarFormClase(false)}>
+        {/* El e.stopPropagation evita que el modal se cierre al hacer clic adentro */}
+        <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <h3>➕ Registrar Nueva Clase</h3>
+          
+          <input name="titulo" placeholder="Ej. Introducción a la Programación" value={formClase.titulo} onChange={handleChangeClase} />
+          <textarea name="descripcion" rows="3" placeholder="Breve descripción del objetivo de la clase..." value={formClase.descripcion} onChange={handleChangeClase} />
+          
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <input type="datetime-local" name="fechaClase" value={formClase.fechaClase} onChange={handleChangeClase} />
+            <input type="datetime-local" name="fechaTermino" value={formClase.fechaTermino} onChange={handleChangeClase} />
+          </div>
+          
+          <input name="urlVideoconferencia" placeholder="URL de la reunión (Zoom/Meet)" value={formClase.urlVideoconferencia} onChange={handleChangeClase} />
+
+          <div className="modal-actions">
+            <button 
+              className="btn-cancelar" 
+              onClick={() => {
+                // 1. Limpiar el estado
+                setFormClase({
+                  titulo: "",
+                  descripcion: "",
+                  fechaClase: "",
+                  fechaTermino: "",
+                  urlVideoconferencia: ""
+                });
+                // 2. Cerrar el modal
+                setMostrarFormClase(false);
+              }}
+            >
+              Cancelar
+            </button>
+            <button className="btn-guardar" onClick={handleGuardarClase}>Guardar Clase</button>
+          </div>
+        </div>
+      </div>
+    )}
 
       {curso.clases?.map((clase) => (
         <div key={clase.idClase} className="card-clase">
@@ -85,15 +206,15 @@ export function ProfesoresContenidosView({idCurso, onRegistrarMaterial, onRegist
                 </a>
               )}
 
-              <button
-                className="btn-asistencia"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log("Registrar asistencia:", clase.idClase);
-                }}
-              >
-                📝 Asistencia
-              </button>
+            <button
+              className="btn-asistencia"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRegistrarAsistencia(clase.idClase); 
+              }}
+            >
+              📝 Asistencia
+            </button>
             </div>
           </div>
 
@@ -127,7 +248,11 @@ export function ProfesoresContenidosView({idCurso, onRegistrarMaterial, onRegist
                       {clase.materiales.map((m) => (
                       <li
                         key={m.idMaterial}
-                        onClick={() => onSelectDetalle("material", m)}
+                        onClick={() => onSelectDetalle({
+                          ...m,
+                          tipo: "material",
+                          idClase: clase.idClase
+                        })}
                         style={{ cursor: "pointer", color: "#007bff" }}
                       >
                         📄 {m.titulo}
@@ -147,7 +272,11 @@ export function ProfesoresContenidosView({idCurso, onRegistrarMaterial, onRegist
                       {clase.tareas.map((t) => (
                       <li
                         key={t.idTarea}
-                        onClick={() => onSelectDetalle("tarea", t)}
+                        onClick={() => onSelectDetalle({
+                          ...t,
+                          tipo: "tarea",
+                          idClase: clase.idClase
+                        })}
                         style={{ cursor: "pointer", color: "#28a745" }}
                       >
                         📝 {t.titulo}

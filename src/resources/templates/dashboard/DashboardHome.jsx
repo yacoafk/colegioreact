@@ -36,6 +36,9 @@ import { EstudiantesDetallesView } from './estudiantes/EstudiantesDetallesView';
 import { ProfesoresCursosView } from './profesores/ProfesoresCursosView'; 
 import { ProfesoresContenidosView } from './profesores/ProfesoresContenidosView'; 
 import { ProfesoresDetallesView } from './profesores/ProfesoresDetallesView'; 
+import { ProfesoresMaterialesRegistroView } from './profesores/ProfesoresMaterialesRegistroView'; 
+import { ProfesoresTareasRegistroView } from './profesores/ProfesoresTareasRegistroView'; 
+import { ProfesoresAsistenciasRegistroView } from './profesores/ProfesoresAsistenciasRegistroView'; 
 
 import '../../static/Dashboard.css';
 import '../../static/global.css';
@@ -47,6 +50,7 @@ export function DashboardHome() {
   const navigate = useNavigate();
   const [detalleSeleccionado, setDetalleSeleccionado] = useState(null);
   const [tipoDetalle, setTipoDetalle] = useState(null);
+  const [claseSeleccionada, setClaseSeleccionada] = useState(null);
 
   useEffect(() => {
     const session = localStorage.getItem('user_session');
@@ -254,20 +258,58 @@ export function DashboardHome() {
           {currentView === 'profesores-contenidos' && (
             <ProfesoresContenidosView 
               idCurso={cursoSeleccionado}
-            onSelectDetalle={(tipo, data) => {
-              setTipoDetalle(tipo);
-              setDetalleSeleccionado(data);
-              setCurrentView('profesores-detalle');
-            }}
+
+              onRegistrarMaterial={(idClase) => {
+                setClaseSeleccionada(idClase);
+                setCurrentView('profesores-materiales');
+              }}
+
+              onRegistrarTarea={(idClase) => {
+                setClaseSeleccionada(idClase);
+                setCurrentView('profesores-tareas');
+              }}
+
+              onRegistrarAsistencia={(idClase) => {
+                setClaseSeleccionada(idClase); 
+                setCurrentView('profesores-asistencias'); 
+              }}
+
+              onSelectDetalle={(data) => {
+                setDetalleSeleccionado(data);
+                setCurrentView('profesores-detalles');
+              }}
             />
           )}
-          {currentView === 'profesores-detalle' && (
-            <ProfesoresDetallesView
-              tipo={tipoDetalle}
-              data={detalleSeleccionado}
-              onBack={() => setCurrentView('profesores-contenidos')}
-            />
-          )}
+
+            {currentView === 'profesores-materiales' && (
+              <ProfesoresMaterialesRegistroView
+                idClase={claseSeleccionada}
+                onBack={() => setCurrentView('profesores-contenidos')}
+              />
+            )}
+
+            {currentView === 'profesores-tareas' && (
+              <ProfesoresTareasRegistroView
+                idClase={claseSeleccionada}
+                onBack={() => setCurrentView('profesores-contenidos')}
+              />
+            )}
+
+            {currentView === 'profesores-detalles' && (
+              <ProfesoresDetallesView
+                data={detalleSeleccionado}
+                onBack={() => setCurrentView('profesores-contenidos')}
+              />
+            )}
+
+            {currentView === 'profesores-asistencias' && (
+              <ProfesoresAsistenciasRegistroView
+                idClase={claseSeleccionada} // 👈 opcional pero recomendado
+                onBack={() => setCurrentView('profesores-contenidos')}
+              />
+            )}
+
+
 
 
           {/* ESTUDIANTES */}
